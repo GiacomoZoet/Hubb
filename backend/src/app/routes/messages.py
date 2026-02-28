@@ -4,6 +4,8 @@ from app import db
 from app.models.message import Message, Reaction
 from app.models.channel import Channel, ChannelMember
 from app.utils.decorators import channel_access_required
+from app import db, socketio
+from app.models.user import User
 
 messages_bp = Blueprint('messages', __name__)
 
@@ -45,6 +47,7 @@ def get_thread(channel_id, parent_id):
 # ============================================================
 # SEND MESSAGE
 # ============================================================
+
 @messages_bp.route('/<int:channel_id>', methods=['POST'])
 @jwt_required()
 @channel_access_required
@@ -59,10 +62,19 @@ def send_message(channel_id):
         channel_id=channel_id,
         user_id=user_id,
         content=data['content'],
-        parent_id=data.get('parent_id')  # None = top-level, set = thread reply
+        parent_id=data.get('parent_id')
     )
     db.session.add(message)
     db.session.commit()
+
+    user = User.query.get(user_id)
+
+    # Emit to all clients in the channel room
+    socketio.emit('new_message', {
+        **message.to_dict(),
+        'username': user.username,
+        'avatar_url': user.avatar_url
+    }, room=f'channel_{channel_id}')
 
     return jsonify({'message': 'Message sent', 'data': message.to_dict()}), 201
 

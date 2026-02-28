@@ -18,15 +18,7 @@ def get_user_from_token(token):
 # CONNECTION
 # ============================================================
 @socketio.on('connect')
-def handle_connect(auth):
-    token = auth.get('token') if auth else None
-    user_id = get_user_from_token(token) if token else None
-    if not user_id:
-        return False  # Reject connection
-    user = User.query.get(user_id)
-    if user:
-        user.last_seen = None  # None = currently online
-        db.session.commit()
+def handle_connect():
     emit('connected', {'message': 'Connected successfully'})
 
 

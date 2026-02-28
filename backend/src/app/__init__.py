@@ -11,7 +11,7 @@ load_dotenv()
 
 db = SQLAlchemy()
 jwt = JWTManager()
-socketio = SocketIO(cors_allowed_origins="*", async_mode='eventlet')
+socketio = SocketIO(cors_allowed_origins="http://localhost:5173", async_mode='eventlet')
 
 def create_app():
     app = Flask(__name__)
