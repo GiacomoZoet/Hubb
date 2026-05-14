@@ -2,26 +2,17 @@
   <div class="auth-container">
     <div class="auth-box">
       <h1>iMessageU</h1>
-      <h2>Create an account</h2>
-      <form @submit.prevent="handleRegister">
+      <h2>Create your workspace</h2>
+      <form @submit.prevent="handleCreate">
         <div class="field">
-          <label>Username</label>
-          <input v-model="form.username" type="text" placeholder="giacomo" required />
-        </div>
-        <div class="field">
-          <label>Email</label>
-          <input v-model="form.email" type="email" placeholder="you@example.com" required />
-        </div>
-        <div class="field">
-          <label>Password</label>
-          <input v-model="form.password" type="password" placeholder="••••••••" required />
+          <label>Workspace Name</label>
+          <input v-model="name" type="text" placeholder="My Team" required />
         </div>
         <p v-if="error" class="error">{{ error }}</p>
         <button type="submit" :disabled="loading">
-          {{ loading ? 'Creating account...' : 'Register' }}
+          {{ loading ? 'Creating...' : 'Create Workspace' }}
         </button>
       </form>
-      <p class="switch">Already have an account? <RouterLink to="/login">Sign in</RouterLink></p>
     </div>
   </div>
 </template>
@@ -29,21 +20,21 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { register } from '@/api/auth'
+import { createWorkspace } from '@/api/workspaces'
 
 const router = useRouter()
-const form = ref({ username: '', email: '', password: '' })
+const name = ref('')
 const error = ref('')
 const loading = ref(false)
 
-async function handleRegister() {
+async function handleCreate() {
   loading.value = true
   error.value = ''
   try {
-    await register(form.value)
-    router.push('/login')
+    const res = await createWorkspace({ name: name.value })
+    router.push(`/workspace/${res.data.workspace.slug}`)
   } catch (e) {
-    error.value = e.response?.data?.error || 'Registration failed'
+    error.value = e.response?.data?.error || 'Failed to create workspace'
   } finally {
     loading.value = false
   }
@@ -51,7 +42,6 @@ async function handleRegister() {
 </script>
 
 <style scoped>
-/* same styles as LoginView */
 .auth-container {
   display: flex; justify-content: center; align-items: center;
   height: 100vh; background: #1a1a2e;
@@ -75,6 +65,4 @@ button {
 }
 button:disabled { opacity: 0.6; cursor: not-allowed; }
 .error { color: #e94560; font-size: 0.85rem; margin-bottom: 0.5rem; }
-.switch { text-align: center; margin-top: 1.5rem; color: #aaa; font-size: 0.9rem; }
-.switch a { color: #e94560; }
 </style>

@@ -11,7 +11,7 @@ load_dotenv()
 
 db = SQLAlchemy()
 jwt = JWTManager()
-socketio = SocketIO(cors_allowed_origins="http://localhost:5173", async_mode='eventlet')
+socketio = SocketIO(cors_allowed_origins=["http://localhost:5173", "http://172.16.31.86:5173"], async_mode='eventlet')
 
 def create_app():
     app = Flask(__name__)
@@ -35,7 +35,7 @@ def create_app():
     socketio.init_app(app)
     with app.app_context():
         from app.sockets import events  # noqa — registers socket handlers
-    CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
+    CORS(app, supports_credentials=True, origins=["http://localhost:5173", "http://172.16.31.86:5173"])
 
     # Register blueprints
     from app.routes.auth import auth_bp

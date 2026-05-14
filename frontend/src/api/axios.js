@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-    baseURL: 'http://localhost:5001/api',
+    baseURL: '/api',
     withCredentials: true  // sends cookies with every request
 })
 
@@ -12,7 +12,7 @@ api.interceptors.response.use(
         if (error.response?.status === 401 && !error.config._retry) {
             error.config._retry = true
             try {
-                await axios.post('http://localhost:5001/api/auth/refresh', {}, { withCredentials: true })
+                await axios.post('/api/auth/refresh', {}, { withCredentials: true })
                 return api(error.config)
             } catch {
                 window.location.href = '/login'
