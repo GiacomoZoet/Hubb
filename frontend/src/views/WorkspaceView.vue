@@ -7,6 +7,7 @@
       :workspaceId="activeWorkspace?.id"
       :workspaceName="activeWorkspace?.name"
       @selectChannel="handleSelectChannel"
+      @channelCreated="reloadChannels"
     />
     <ChatArea v-if="activeChannel" :channel="activeChannel" class="flex-1 min-w-0" />
     <div v-else class="flex-1 flex items-center justify-center text-sm text-gray-400 dark:text-gray-500">
@@ -48,6 +49,11 @@ function handleSelectWorkspace(workspace) {
 
 function handleSelectChannel(channel) {
   activeChannel.value = channel
+}
+
+async function reloadChannels() {
+  const chRes = await listChannels(activeWorkspace.value.id)
+  channels.value = chRes.data
 }
 
 onMounted(async () => {

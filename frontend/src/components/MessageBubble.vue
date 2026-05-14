@@ -5,7 +5,7 @@
     </div>
     <div class="flex flex-col gap-0.5 min-w-0">
       <div class="flex items-baseline gap-2">
-        <span class="text-xs font-semibold text-teal-primary">{{ message.username }}</span>
+        <span class="text-xs font-semibold text-teal-primary dark:text-teal-primary">{{ message.username }}</span>
         <span class="text-[10px] text-gray-400 dark:text-gray-500">{{ formatTime(message.created_at) }}</span>
         <span v-if="message.is_edited" class="text-[10px] text-gray-400 dark:text-gray-500">(edited)</span>
       </div>

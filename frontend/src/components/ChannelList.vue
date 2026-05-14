@@ -52,7 +52,7 @@ import { ref } from 'vue'
 import { createChannel } from '@/api/workspaces'
 
 const props = defineProps(['channels', 'activeChannel', 'workspaceId', 'workspaceName'])
-defineEmits(['selectChannel'])
+const emit = defineEmits(['selectChannel', 'channelCreated'])
 
 const showModal = ref(false)
 const newChannelName = ref('')
@@ -66,7 +66,6 @@ async function createNewChannel() {
   })
   showModal.value = false
   newChannelName.value = ''
-  // Reload channels — parent will handle via emit if needed
-  window.location.reload()
+  emit('channelCreated')
 }
 </script>

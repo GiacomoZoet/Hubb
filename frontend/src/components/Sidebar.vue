@@ -16,19 +16,30 @@
       </div>
     </div>
     <button
-      @click="toggleDarkMode"
+      @click="handleToggleDark"
       class="text-white/60 dark:text-gray-500 hover:text-white dark:hover:text-gray-300 text-base mb-1"
-      title="Toggle dark mode"
-    >☀</button>
+      :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+    >{{ isDark ? '☀' : '🌙' }}</button>
     <UserAvatar :user="authStore.user" @click="logout" title="Click to logout" />
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 import UserAvatar from './UserAvatar.vue'
 import { toggleDarkMode } from '@/utils/darkMode'
+
+const isDark = ref(false)
+onMounted(() => {
+  isDark.value = document.documentElement.classList.contains('dark')
+})
+
+function handleToggleDark() {
+  toggleDarkMode()
+  isDark.value = document.documentElement.classList.contains('dark')
+}
 
 defineProps(['workspaces', 'activeWorkspace'])
 defineEmits(['selectWorkspace'])
