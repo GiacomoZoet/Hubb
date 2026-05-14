@@ -65,13 +65,21 @@ async function goToNextWorkspace() {
 
 async function handleLeave() {
   if (!confirm('Leave this workspace?')) return
-  await leaveWorkspace(props.workspaceId)
-  goToNextWorkspace()
+  try {
+    await leaveWorkspace(props.workspaceId)
+    goToNextWorkspace()
+  } catch (err) {
+    alert(err.response?.data?.error || 'Could not leave workspace')
+  }
 }
 
 async function handleDelete() {
   if (!confirm('Delete this workspace? This cannot be undone.')) return
-  await deleteWorkspace(props.workspaceId)
-  goToNextWorkspace()
+  try {
+    await deleteWorkspace(props.workspaceId)
+    goToNextWorkspace()
+  } catch (err) {
+    alert(err.response?.data?.error || 'Could not delete workspace')
+  }
 }
 </script>
