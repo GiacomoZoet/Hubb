@@ -19,6 +19,12 @@ def get_user_from_token(token):
 # ============================================================
 @socketio.on('connect')
 def handle_connect():
+    from flask import request
+    token = request.cookies.get('access_token_cookie')
+    if token:
+        user_id = get_user_from_token(token)
+        if user_id:
+            join_room(f'user_{user_id}')
     emit('connected', {'message': 'Connected successfully'})
 
 

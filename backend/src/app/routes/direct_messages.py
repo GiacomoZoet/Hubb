@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app import db
+from app import db, socketio
 from app.models.direct_message import DirectMessage
 from app.models.user import User
 
@@ -26,6 +26,10 @@ def send_dm(receiver_id):
     dm = DirectMessage(sender_id=sender_id, receiver_id=receiver_id, content=data['content'])
     db.session.add(dm)
     db.session.commit()
+
+    sender = User.query.get(sender_id)
+    socketio.emit('new_dm', {**dm.to_dict(), 'sender_username': sender.username}, room=f'user_{receiver_id}')
+
     return jsonify({'message': 'DM sent', 'data': dm.to_dict()}), 201
 
 
