@@ -12,7 +12,7 @@ export const useChatStore = defineStore('chat', () => {
     function connectSocket() {
         if (socket.value?.connected) return
 
-        socket.value = io('/', {
+        socket.value = io(import.meta.env.VITE_API_URL || '/', {
             withCredentials: true,
             transports: ['websocket'],
         })

@@ -12,6 +12,7 @@ CREATE TABLE users (
     password    VARCHAR(255) NOT NULL,
     avatar_url  VARCHAR(500) DEFAULT NULL,
     is_active   BOOLEAN DEFAULT TRUE,
+    confirmed   BOOLEAN DEFAULT FALSE,
     last_seen   DATETIME DEFAULT NULL,
     created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
 );
@@ -131,6 +132,21 @@ CREATE TABLE reactions (
     UNIQUE KEY unique_reaction (message_id, user_id, emoji),
     FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id)    REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- ============================================================
+-- WORKSPACE INVITATIONS
+-- ============================================================
+CREATE TABLE workspace_invitations (
+    id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    workspace_id INT UNSIGNED NOT NULL,
+    invited_by   INT UNSIGNED NOT NULL,
+    user_id      INT UNSIGNED NOT NULL,
+    status       ENUM('pending', 'accepted', 'declined') DEFAULT 'pending',
+    created_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (workspace_id) REFERENCES workspaces(id) ON DELETE CASCADE,
+    FOREIGN KEY (invited_by)   REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id)      REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- ============================================================
