@@ -1,7 +1,10 @@
 <template>
   <div class="w-[220px] shrink-0 flex flex-col bg-teal-light dark:bg-gray-800 border-r border-teal-border dark:border-gray-700 h-screen overflow-hidden">
     <div class="px-3 py-3.5 border-b border-teal-border dark:border-gray-700 shrink-0 flex items-center justify-between">
-      <div class="font-bold text-sm text-teal-text dark:text-gray-100 truncate">{{ workspaceName || 'Workspace' }}</div>
+      <div
+        class="font-bold text-sm text-teal-text dark:text-gray-100 truncate cursor-pointer hover:opacity-75"
+        @click="showMembersModal = true"
+      >{{ workspaceName || 'Workspace' }}</div>
       <button
         @click="showInviteModal = true"
         class="text-xs text-teal-primary hover:text-teal-dark transition-colors shrink-0 ml-2"
@@ -68,12 +71,21 @@
         </div>
       </div>
     </div>
+
+    <!-- Workspace Members modal -->
+    <WorkspaceMembersModal
+      v-if="showMembersModal"
+      :workspaceId="workspaceId"
+      :workspaceName="workspaceName"
+      @close="showMembersModal = false"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { createChannel, inviteMember } from '@/api/workspaces'
+import WorkspaceMembersModal from './WorkspaceMembersModal.vue'
 
 const props = defineProps(['channels', 'activeChannel', 'workspaceId', 'workspaceName'])
 const emit = defineEmits(['selectChannel', 'channelCreated'])
@@ -113,4 +125,6 @@ async function sendInvite() {
     inviteError.value = err.response?.data?.error || 'Something went wrong'
   }
 }
+
+const showMembersModal = ref(false)
 </script>
