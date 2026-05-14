@@ -10,6 +10,7 @@ class User(db.Model):
     password    = db.Column(db.String(255), nullable=False)
     avatar_url  = db.Column(db.String(500), default=None)
     is_active   = db.Column(db.Boolean, default=True)
+    confirmed   = db.Column(db.Boolean, default=False)
     last_seen   = db.Column(db.DateTime, default=None)
     created_at  = db.Column(db.DateTime, default=datetime.utcnow)
 

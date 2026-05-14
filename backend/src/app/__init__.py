@@ -3,14 +3,16 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from flask_socketio import SocketIO
+from flask_mail import Mail
 from dotenv import load_dotenv
 from urllib.parse import quote_plus
 import os
 
-load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 db = SQLAlchemy()
 jwt = JWTManager()
+mail = Mail()
 socketio = SocketIO(cors_allowed_origins='*', async_mode='eventlet')
 
 def create_app():
@@ -30,8 +32,16 @@ def create_app():
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 900
     app.config['JWT_REFRESH_TOKEN_EXPIRES'] = 2592000
 
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+    app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+    app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')
+
     db.init_app(app)
     jwt.init_app(app)
+    mail.init_app(app)
     socketio.init_app(app)
     with app.app_context():
         from app.sockets import events  # noqa — registers socket handlers
