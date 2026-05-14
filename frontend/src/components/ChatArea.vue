@@ -1,6 +1,10 @@
 <template>
   <div class="flex-1 flex flex-col bg-white dark:bg-gray-900 min-w-0 h-screen overflow-hidden">
     <div class="flex items-center gap-2 px-5 py-3.5 border-b border-teal-border dark:border-gray-700 shrink-0">
+      <button
+        @click="$emit('back')"
+        class="md:hidden text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-sm transition-colors"
+      >←</button>
       <span class="text-teal-primary font-bold text-base">{{ channel.is_private ? '🔒' : '#' }}</span>
       <span class="font-bold text-gray-900 dark:text-gray-100 text-sm flex-1">{{ channel.name }}</span>
       <button
@@ -43,6 +47,7 @@ import { useChatStore } from '@/stores/chat'
 import { addChannelMember } from '@/api/workspaces'
 
 const props = defineProps(['channel'])
+defineEmits(['back'])
 const chatStore = useChatStore()
 
 async function loadChannel(channel) {

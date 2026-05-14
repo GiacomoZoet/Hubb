@@ -25,6 +25,13 @@ export const useChatStore = defineStore('chat', () => {
             const dmStore = useDMStore()
             if (dmStore.activeUser?.id === dm.sender_id) {
                 dmStore.activeConversation.push(dm)
+            } else {
+                const contact = dmStore.inbox.find(c => c.id === dm.sender_id)
+                if (contact) {
+                    contact.unread_count = (contact.unread_count || 0) + 1
+                } else {
+                    dmStore.inbox.push({ id: dm.sender_id, username: dm.sender_username, unread_count: 1 })
+                }
             }
         })
 

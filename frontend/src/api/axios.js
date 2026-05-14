@@ -15,7 +15,10 @@ api.interceptors.response.use(
                 await axios.post('/api/auth/refresh', {}, { withCredentials: true })
                 return api(error.config)
             } catch {
-                window.location.href = '/login'
+                const pub = ['/', '/login', '/register']
+                if (!pub.includes(window.location.pathname)) {
+                    window.location.href = '/login'
+                }
             }
         }
         return Promise.reject(error)

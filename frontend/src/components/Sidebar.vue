@@ -1,6 +1,6 @@
 <template>
-  <div class="w-[60px] shrink-0 flex flex-col items-center py-3 gap-2 bg-teal-primary dark:bg-gray-950 h-screen">
-    <div class="font-bold text-sm text-white dark:text-teal-primary mb-2 tracking-tight">iMU</div>
+  <div class="hidden md:flex w-[60px] shrink-0 flex-col items-center py-3 gap-2 bg-teal-primary dark:bg-gray-950 h-screen">
+    <div class="font-bold text-sm text-white dark:text-teal-primary mb-2 tracking-tight">hub</div>
     <div class="flex flex-col gap-2 flex-1 w-full items-center">
       <div
         v-for="ws in workspaces"
@@ -13,6 +13,28 @@
         @click="$emit('selectWorkspace', ws)"
       >
         {{ ws.name.charAt(0).toUpperCase() }}
+      </div>
+      <div
+        class="w-9 h-9 rounded-xl flex items-center justify-center text-lg cursor-pointer transition-all bg-white/25 text-white dark:bg-gray-800 dark:text-gray-400 hover:bg-white/40 dark:hover:bg-gray-700"
+        title="Create huub"
+        @click="showCreateWsModal = true"
+      >+</div>
+    </div>
+
+    <!-- Create Workspace modal -->
+    <div v-if="showCreateWsModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click.self="showCreateWsModal = false">
+      <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 w-80 border border-teal-border dark:border-gray-700 flex flex-col gap-4 shadow-lg">
+        <h3 class="font-bold text-gray-900 dark:text-gray-100">New huub</h3>
+        <input
+          v-model="newWsName"
+          placeholder="My Team"
+          class="w-full px-3 py-2 rounded-lg border border-teal-border dark:border-gray-600 bg-teal-lighter dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-primary"
+        />
+        <p v-if="createWsError" class="text-xs text-red-500">{{ createWsError }}</p>
+        <div class="flex gap-2 justify-end">
+          <button @click="showCreateWsModal = false" class="px-4 py-2 rounded-lg text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Cancel</button>
+          <button @click="handleCreateWs" :disabled="createWsLoading" class="px-4 py-2 rounded-lg text-sm bg-teal-primary text-white font-semibold hover:bg-teal-dark transition-colors disabled:opacity-60">{{ createWsLoading ? 'Creating...' : 'Create' }}</button>
+        </div>
       </div>
     </div>
 
@@ -59,7 +81,30 @@
       </div>
     </div>
 
-    <UserAvatar :user="authStore.user" @click="logout" title="Click to logout" />
+    <div class="relative mb-1">
+      <UserAvatar :user="authStore.user" @click="showProfile = !showProfile" />
+
+      <div v-if="showProfile" class="fixed inset-0 z-40" @click="showProfile = false"></div>
+      <div
+        v-if="showProfile"
+        class="absolute bottom-12 left-12 w-56 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-teal-border dark:border-gray-700 p-3 flex flex-col gap-2 z-50"
+      >
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-teal-primary text-white flex items-center justify-center font-bold text-sm shrink-0">
+            {{ authStore.user?.username?.charAt(0).toUpperCase() }}
+          </div>
+          <div class="flex flex-col min-w-0">
+            <span class="text-sm font-bold text-gray-800 dark:text-gray-100 truncate">{{ authStore.user?.username }}</span>
+            <span class="text-[11px] text-gray-400 dark:text-gray-500 truncate">{{ authStore.user?.email }}</span>
+          </div>
+        </div>
+        <div class="border-t border-gray-100 dark:border-gray-700"></div>
+        <button
+          @click.stop="logout"
+          class="text-left text-sm text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+        >Logout</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -69,7 +114,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 import UserAvatar from './UserAvatar.vue'
 import { toggleDarkMode } from '@/utils/darkMode'
-import { getInvitations, acceptInvitation, declineInvitation } from '@/api/workspaces'
+import { getInvitations, acceptInvitation, declineInvitation, createWorkspace } from '@/api/workspaces'
 
 const isDark = ref(false)
 
@@ -97,6 +142,7 @@ async function logout() {
 
 const invitations = ref([])
 const showInvites = ref(false)
+const showProfile = ref(false)
 
 async function handleAccept(inv) {
   await acceptInvitation(inv.id)
@@ -108,5 +154,26 @@ async function handleAccept(inv) {
 async function handleDecline(inv) {
   await declineInvitation(inv.id)
   invitations.value = invitations.value.filter(i => i.id !== inv.id)
+}
+
+const showCreateWsModal = ref(false)
+const newWsName = ref('')
+const createWsError = ref('')
+const createWsLoading = ref(false)
+
+async function handleCreateWs() {
+  if (!newWsName.value.trim()) return
+  createWsLoading.value = true
+  createWsError.value = ''
+  try {
+    const res = await createWorkspace({ name: newWsName.value.trim() })
+    showCreateWsModal.value = false
+    newWsName.value = ''
+    router.push(`/workspace/${res.data.workspace.slug}`)
+  } catch (e) {
+    createWsError.value = e.response?.data?.error || 'Failed to create huub'
+  } finally {
+    createWsLoading.value = false
+  }
 }
 </script>

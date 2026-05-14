@@ -1,9 +1,13 @@
 <template>
-  <div class="w-[240px] shrink-0 flex flex-col bg-teal-light dark:bg-gray-800 border-l border-teal-border dark:border-gray-700 h-screen overflow-hidden">
+  <div class="shrink-0 flex flex-col bg-teal-light dark:bg-gray-800 border-l border-teal-border dark:border-gray-700 h-screen overflow-hidden">
 
     <!-- Inbox -->
     <div v-if="!dmStore.activeUser" class="flex flex-col h-full">
-      <div class="px-3 pt-3.5 pb-2 border-b border-teal-border dark:border-gray-700 shrink-0">
+      <div class="px-3 pt-3.5 pb-2 border-b border-teal-border dark:border-gray-700 shrink-0 flex items-center gap-2">
+        <button
+          @click="$emit('back')"
+          class="md:hidden text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-sm transition-colors"
+        >←</button>
         <div class="text-[10px] font-bold text-teal-primary uppercase tracking-widest">Direct Messages</div>
       </div>
       <div class="flex-1 overflow-y-auto py-2">
@@ -13,7 +17,7 @@
           class="flex items-center gap-2.5 px-3 py-2 cursor-pointer hover:bg-teal-border/40 dark:hover:bg-gray-700 transition-colors"
           @click="openConversation(contact)"
         >
-          <div class="w-8 h-8 rounded-full bg-teal-primary shrink-0 flex items-center justify-center font-bold text-sm text-white">
+          <div :class="['w-8 h-8 rounded-full shrink-0 flex items-center justify-center font-bold text-sm text-white', userColor(contact.username)]">
             {{ contact.username.charAt(0).toUpperCase() }}
           </div>
           <span class="text-xs text-teal-text dark:text-gray-300 flex-1 truncate">{{ contact.username }}</span>
@@ -91,12 +95,14 @@
 
 <script setup>
 import { ref, watch, nextTick, onMounted } from 'vue'
+import { userColor } from '@/utils/userColor'
 import { useDMStore } from '@/stores/dm'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/api/axios'
 
 const dmStore = useDMStore()
 const authStore = useAuthStore()
+defineEmits(['back'])
 
 const newMessage = ref('')
 const showSearch = ref(false)
