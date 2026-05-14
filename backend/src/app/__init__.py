@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
@@ -55,12 +55,15 @@ def create_app():
     from app.routes.messages import messages_bp
     from app.routes.direct_messages import dm_bp
 
-
     app.register_blueprint(auth_bp,       url_prefix='/api/auth')
     app.register_blueprint(users_bp,      url_prefix='/api/users')
     app.register_blueprint(workspaces_bp, url_prefix='/api/workspaces')
     app.register_blueprint(channels_bp,   url_prefix='/api/channels')
     app.register_blueprint(messages_bp,   url_prefix='/api/messages')
-    app.register_blueprint(dm_bp, url_prefix='/api/dm')
+    app.register_blueprint(dm_bp,         url_prefix='/api/dm')
+
+    @app.route('/healthz')
+    def healthz():
+        return jsonify({'status': 'ok'}), 200
 
     return app
