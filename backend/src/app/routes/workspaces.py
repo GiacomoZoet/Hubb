@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
-from app.models.workspace import Workspace, WorkspaceMember
+from app.models.workspace import Workspace, WorkspaceMember, WorkspaceInvitation
 from app.models.user import User
 from app.utils.decorators import workspace_member_required, workspace_admin_required
 import re
@@ -27,15 +27,13 @@ def create_workspace():
 
     slug = slugify(data['name'])
 
-    # Ensure slug is unique
     if Workspace.query.filter_by(slug=slug).first():
         slug = f"{slug}-{user_id}"
 
     workspace = Workspace(name=data['name'], slug=slug, owner_id=user_id)
     db.session.add(workspace)
-    db.session.flush()  # get workspace.id before commit
+    db.session.flush()
 
-    # Add creator as owner in workspace_members
     member = WorkspaceMember(workspace_id=workspace.id, user_id=user_id, role='owner')
     db.session.add(member)
     db.session.commit()
@@ -54,6 +52,63 @@ def list_workspaces():
     workspace_ids = [m.workspace_id for m in memberships]
     workspaces = Workspace.query.filter(Workspace.id.in_(workspace_ids)).all()
     return jsonify([w.to_dict() for w in workspaces]), 200
+
+
+# ============================================================
+# LIST MY PENDING INVITATIONS
+# ============================================================
+@workspaces_bp.route('/invitations', methods=['GET'])
+@jwt_required()
+def list_invitations():
+    user_id = int(get_jwt_identity())
+    invitations = WorkspaceInvitation.query.filter_by(user_id=user_id, status='pending').all()
+    result = []
+    for inv in invitations:
+        workspace = Workspace.query.get(inv.workspace_id)
+        result.append({
+            **inv.to_dict(),
+            'workspace_name': workspace.name,
+            'workspace_slug': workspace.slug
+        })
+    return jsonify(result), 200
+
+
+# ============================================================
+# ACCEPT INVITATION
+# ============================================================
+@workspaces_bp.route('/invitations/<int:invitation_id>/accept', methods=['POST'])
+@jwt_required()
+def accept_invitation(invitation_id):
+    user_id = int(get_jwt_identity())
+    inv = WorkspaceInvitation.query.filter_by(id=invitation_id, user_id=user_id).first()
+    if not inv:
+        return jsonify({'error': 'Invitation not found'}), 404
+    if inv.status != 'pending':
+        return jsonify({'error': 'Invitation already handled'}), 409
+
+    inv.status = 'accepted'
+    member = WorkspaceMember(workspace_id=inv.workspace_id, user_id=user_id, role='member')
+    db.session.add(member)
+    db.session.commit()
+    return jsonify({'message': 'Invitation accepted'}), 200
+
+
+# ============================================================
+# DECLINE INVITATION
+# ============================================================
+@workspaces_bp.route('/invitations/<int:invitation_id>/decline', methods=['POST'])
+@jwt_required()
+def decline_invitation(invitation_id):
+    user_id = int(get_jwt_identity())
+    inv = WorkspaceInvitation.query.filter_by(id=invitation_id, user_id=user_id).first()
+    if not inv:
+        return jsonify({'error': 'Invitation not found'}), 404
+    if inv.status != 'pending':
+        return jsonify({'error': 'Invitation already handled'}), 409
+
+    inv.status = 'declined'
+    db.session.commit()
+    return jsonify({'message': 'Invitation declined'}), 200
 
 
 # ============================================================
@@ -77,33 +132,40 @@ def get_workspace(slug):
 
 
 # ============================================================
-# INVITE MEMBER TO WORKSPACE
+# INVITE MEMBER (creates invitation, does not add directly)
 # ============================================================
 @workspaces_bp.route('/<int:workspace_id>/members', methods=['POST'])
 @jwt_required()
 @workspace_admin_required
 def invite_member(workspace_id):
+    user_id = int(get_jwt_identity())
     data = request.get_json()
 
     user = User.query.filter_by(email=data.get('email')).first()
     if not user:
         return jsonify({'error': 'User not found'}), 404
 
-    existing = WorkspaceMember.query.filter_by(
+    existing_member = WorkspaceMember.query.filter_by(
         workspace_id=workspace_id, user_id=user.id
     ).first()
-    if existing:
+    if existing_member:
         return jsonify({'error': 'User is already a member'}), 409
 
-    member = WorkspaceMember(
+    existing_invite = WorkspaceInvitation.query.filter_by(
+        workspace_id=workspace_id, user_id=user.id, status='pending'
+    ).first()
+    if existing_invite:
+        return jsonify({'error': 'Invitation already sent'}), 409
+
+    invite = WorkspaceInvitation(
         workspace_id=workspace_id,
-        user_id=user.id,
-        role=data.get('role', 'member')
+        invited_by=user_id,
+        user_id=user.id
     )
-    db.session.add(member)
+    db.session.add(invite)
     db.session.commit()
 
-    return jsonify({'message': f'{user.username} added to workspace'}), 201
+    return jsonify({'message': 'Invitation sent'}), 201
 
 
 # ============================================================
@@ -160,6 +222,23 @@ def remove_member(workspace_id, user_id):
     db.session.delete(member)
     db.session.commit()
     return jsonify({'message': 'Member removed'}), 200
+
+
+# ============================================================
+# LEAVE WORKSPACE
+# ============================================================
+@workspaces_bp.route('/<int:workspace_id>/leave', methods=['DELETE'])
+@jwt_required()
+@workspace_member_required
+def leave_workspace(workspace_id):
+    user_id = int(get_jwt_identity())
+    member = WorkspaceMember.query.filter_by(workspace_id=workspace_id, user_id=user_id).first()
+    if member.role == 'owner':
+        return jsonify({'error': 'Owner cannot leave — delete the workspace instead'}), 403
+
+    db.session.delete(member)
+    db.session.commit()
+    return jsonify({'message': 'Left workspace'}), 200
 
 
 # ============================================================
