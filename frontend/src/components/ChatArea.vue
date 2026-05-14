@@ -26,7 +26,11 @@ async function loadChannel(channel) {
   if (!channel) return
   chatStore.leaveChannel(channel.id)
   await chatStore.loadMessages(channel.id)
-  chatStore.joinChannel(channel.id)
+  if (chatStore.socket?.connected) {
+    chatStore.joinChannel(channel.id)
+  } else {
+    chatStore.socket?.once('connect', () => chatStore.joinChannel(channel.id))
+  }
 }
 
 onMounted(() => {

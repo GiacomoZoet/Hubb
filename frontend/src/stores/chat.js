@@ -1,32 +1,31 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, shallowRef } from 'vue'
 import { io } from 'socket.io-client'
 import { getMessages } from '@/api/messages'
+import { useDMStore } from '@/stores/dm'
 
 export const useChatStore = defineStore('chat', () => {
     const messages = ref([])
     const typingUsers = ref([])
-    const socket = ref(null)
+    const socket = shallowRef(null)
 
     function connectSocket() {
         if (socket.value?.connected) return
 
         socket.value = io('/', {
             withCredentials: true,
-            transports: ['websocket', 'polling']  // ← try websocket first, fallback to polling
-        })
-
-        socket.value.on('connect', () => {
-            console.log('✅ Socket connected:', socket.value.id)
-        })
-
-        socket.value.on('connect_error', (err) => {
-            console.error('❌ Socket error:', err.message)  // ← this will tell us exactly what's wrong
+            transports: ['websocket'],
         })
 
         socket.value.on('new_message', (msg) => {
-            console.log('🔥 new_message:', msg)
             messages.value = [...messages.value, msg]
+        })
+
+        socket.value.on('new_dm', (dm) => {
+            const dmStore = useDMStore()
+            if (dmStore.activeUser?.id === dm.sender_id) {
+                dmStore.activeConversation.push(dm)
+            }
         })
 
         socket.value.on('user_typing', (data) => {
