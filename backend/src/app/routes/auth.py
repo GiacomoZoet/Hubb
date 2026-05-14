@@ -31,8 +31,8 @@ def register():
 
     try:
         send_confirmation_email(data['email'])
-    except Exception:
-        return jsonify({'error': 'Failed to send confirmation email. Check mail settings.'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
     hashed = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt())
     user = User(
