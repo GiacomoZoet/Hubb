@@ -1,15 +1,25 @@
 <template>
-  <div class="auth-container">
-    <div class="auth-box">
-      <h1>iMessageU</h1>
-      <h2>Create your workspace</h2>
+  <div class="min-h-screen flex items-center justify-center bg-teal-lighter dark:bg-gray-900">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl px-10 py-10 w-[400px] shadow-sm border border-teal-border dark:border-gray-700">
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">iMessageU</h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-8">Create your workspace</p>
       <form @submit.prevent="handleCreate">
-        <div class="field">
-          <label>Workspace Name</label>
-          <input v-model="name" type="text" placeholder="My Team" required />
+        <div class="mb-5">
+          <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1.5">Workspace Name</label>
+          <input
+            v-model="name"
+            type="text"
+            placeholder="My Team"
+            required
+            class="w-full px-4 py-2.5 rounded-lg border border-teal-border dark:border-gray-600 bg-teal-lighter dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-primary"
+          />
         </div>
-        <p v-if="error" class="error">{{ error }}</p>
-        <button type="submit" :disabled="loading">
+        <p v-if="error" class="text-red-500 text-xs mb-3">{{ error }}</p>
+        <button
+          type="submit"
+          :disabled="loading"
+          class="w-full py-3 bg-teal-primary text-white rounded-lg font-semibold text-sm hover:bg-teal-dark transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+        >
           {{ loading ? 'Creating...' : 'Create Workspace' }}
         </button>
       </form>
@@ -41,28 +51,3 @@ async function handleCreate() {
 }
 </script>
 
-<style scoped>
-.auth-container {
-  display: flex; justify-content: center; align-items: center;
-  height: 100vh; background: #1a1a2e;
-}
-.auth-box {
-  background: #16213e; padding: 2.5rem; border-radius: 12px;
-  width: 400px; color: white;
-}
-h1 { font-size: 1.8rem; margin-bottom: 0.25rem; }
-h2 { font-size: 1rem; font-weight: 400; color: #aaa; margin-bottom: 2rem; }
-.field { margin-bottom: 1.2rem; }
-label { display: block; font-size: 0.85rem; margin-bottom: 0.4rem; color: #ccc; }
-input {
-  width: 100%; padding: 0.7rem 1rem; border-radius: 8px;
-  border: 1px solid #333; background: #0f3460; color: white;
-  font-size: 0.95rem; box-sizing: border-box;
-}
-button {
-  width: 100%; padding: 0.75rem; background: #e94560; color: white;
-  border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; margin-top: 0.5rem;
-}
-button:disabled { opacity: 0.6; cursor: not-allowed; }
-.error { color: #e94560; font-size: 0.85rem; margin-bottom: 0.5rem; }
-</style>
