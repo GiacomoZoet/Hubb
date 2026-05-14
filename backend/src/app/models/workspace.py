@@ -30,3 +30,24 @@ class WorkspaceMember(db.Model):
     user_id      = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), primary_key=True)
     role         = db.Column(db.Enum('owner', 'admin', 'member'), default='member')
     joined_at    = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class WorkspaceInvitation(db.Model):
+    __tablename__ = 'workspace_invitations'
+
+    id           = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    workspace_id = db.Column(db.Integer, db.ForeignKey('workspaces.id', ondelete='CASCADE'), nullable=False)
+    invited_by   = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    user_id      = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    status       = db.Column(db.Enum('pending', 'accepted', 'declined'), default='pending')
+    created_at   = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id':           self.id,
+            'workspace_id': self.workspace_id,
+            'invited_by':   self.invited_by,
+            'user_id':      self.user_id,
+            'status':       self.status,
+            'created_at':   self.created_at.isoformat()
+        }
