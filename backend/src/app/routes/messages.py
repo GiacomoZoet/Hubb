@@ -24,8 +24,13 @@ def get_messages(channel_id):
         .order_by(Message.created_at.desc())\
         .paginate(page=page, per_page=per_page, error_out=False)
 
+    result = []
+    for m in messages.items:
+        user = User.query.get(m.user_id)
+        result.append({**m.to_dict(), 'username': user.username, 'avatar_url': user.avatar_url})
+
     return jsonify({
-        'messages': [m.to_dict() for m in messages.items],
+        'messages': result,
         'total': messages.total,
         'pages': messages.pages,
         'current_page': messages.page
