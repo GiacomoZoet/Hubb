@@ -1,6 +1,6 @@
 <template>
   <div class="flex gap-3 px-2 py-1.5 rounded-lg hover:bg-teal-lighter/60 dark:hover:bg-gray-800/60 group">
-    <div class="w-9 h-9 rounded-full bg-teal-primary shrink-0 flex items-center justify-center font-bold text-sm text-white">
+    <div :class="['w-9 h-9 rounded-full shrink-0 flex items-center justify-center font-bold text-sm text-white', userColor(message.username)]">
       {{ message.username?.charAt(0).toUpperCase() || '?' }}
     </div>
     <div class="flex flex-col gap-0.5 min-w-0">
@@ -15,6 +15,8 @@
 </template>
 
 <script setup>
+import { userColor } from '@/utils/userColor'
+
 defineProps(['message'])
 
 function formatTime(ts) {

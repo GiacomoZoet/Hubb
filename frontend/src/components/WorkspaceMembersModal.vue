@@ -19,12 +19,12 @@
           v-if="myRole && myRole !== 'owner'"
           @click="handleLeave"
           class="px-4 py-2 rounded-lg text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-left"
-        >Leave workspace</button>
+        >Leave huub</button>
         <button
           v-if="myRole === 'owner'"
           @click="handleDelete"
           class="px-4 py-2 rounded-lg text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-left"
-        >Delete workspace</button>
+        >Delete huub</button>
       </div>
     </div>
   </div>
@@ -64,22 +64,22 @@ async function goToNextWorkspace() {
 }
 
 async function handleLeave() {
-  if (!confirm('Leave this workspace?')) return
+  if (!confirm('Leave this huub?')) return
   try {
     await leaveWorkspace(props.workspaceId)
     goToNextWorkspace()
   } catch (err) {
-    alert(err.response?.data?.error || 'Could not leave workspace')
+    alert(err.response?.data?.error || 'Could not leave huub')
   }
 }
 
 async function handleDelete() {
-  if (!confirm('Delete this workspace? This cannot be undone.')) return
+  if (!confirm('Delete this huub? This cannot be undone.')) return
   try {
     await deleteWorkspace(props.workspaceId)
     goToNextWorkspace()
   } catch (err) {
-    alert(err.response?.data?.error || 'Could not delete workspace')
+    alert(err.response?.data?.error || 'Could not delete huub')
   }
 }
 </script>

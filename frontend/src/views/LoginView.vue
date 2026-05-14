@@ -1,8 +1,8 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-teal-lighter dark:bg-gray-900">
-    <div class="bg-white dark:bg-gray-800 rounded-2xl px-10 py-10 w-[400px] shadow-sm border border-teal-border dark:border-gray-700">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">iMessageU</h1>
-      <p class="text-sm text-gray-500 dark:text-gray-400 mb-8">Sign in to your workspace</p>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl px-6 py-8 md:px-10 md:py-10 w-full max-w-[400px] mx-4 md:mx-auto shadow-sm border border-teal-border dark:border-gray-700">
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">hubb</h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-8">Sign in to your huub</p>
       <form @submit.prevent="handleLogin">
         <div class="mb-5">
           <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1.5">Email</label>
@@ -16,13 +16,18 @@
         </div>
         <div class="mb-5">
           <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1.5">Password</label>
-          <input
-            v-model="form.password"
-            type="password"
-            placeholder="••••••••"
-            required
-            class="w-full px-4 py-2.5 rounded-lg border border-teal-border dark:border-gray-600 bg-teal-lighter dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-primary"
-          />
+          <div class="relative">
+            <input
+              v-model="form.password"
+              :type="showPassword ? 'text' : 'password'"
+              placeholder="••••••••"
+              required
+              class="w-full px-4 py-2.5 rounded-lg border border-teal-border dark:border-gray-600 bg-teal-lighter dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-primary pr-10"
+            />
+            <button type="button" @click="showPassword = !showPassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xs">
+              {{ showPassword ? 'Hide' : 'Show' }}
+            </button>
+          </div>
         </div>
         <p v-if="error" class="text-red-500 text-xs mb-3">{{ error }}</p>
         <button
@@ -52,6 +57,7 @@ const authStore = useAuthStore()
 const form = ref({ email: '', password: '' })
 const error = ref('')
 const loading = ref(false)
+const showPassword = ref(false)
 
 async function handleLogin() {
   loading.value = true
@@ -71,4 +77,3 @@ async function handleLogin() {
   }
 }
 </script>
-

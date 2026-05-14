@@ -17,3 +17,7 @@ __pycache__/
 
 # Brainstorming sessions
 .superpowers/
+
+# Project meta (not for version control)
+CLAUDE.md
+docs/

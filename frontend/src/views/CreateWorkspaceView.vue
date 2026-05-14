@@ -1,11 +1,11 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-teal-lighter dark:bg-gray-900">
-    <div class="bg-white dark:bg-gray-800 rounded-2xl px-10 py-10 w-[400px] shadow-sm border border-teal-border dark:border-gray-700">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">iMessageU</h1>
-      <p class="text-sm text-gray-500 dark:text-gray-400 mb-8">Create your workspace</p>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl px-6 py-8 md:px-10 md:py-10 w-full max-w-[400px] mx-4 md:mx-auto shadow-sm border border-teal-border dark:border-gray-700">
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">hubb</h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-8">Create your huub</p>
       <form @submit.prevent="handleCreate">
         <div class="mb-5">
-          <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1.5">Workspace Name</label>
+          <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1.5">huub Name</label>
           <input
             v-model="name"
             type="text"
