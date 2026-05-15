@@ -27,8 +27,9 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['JWT_TOKEN_LOCATION'] = ['cookies']
     app.config['JWT_COOKIE_HTTPONLY'] = True
-    app.config['JWT_COOKIE_SECURE'] = False
-    app.config['JWT_COOKIE_CSRF_PROTECT'] = False  # ← must be here
+    app.config['JWT_COOKIE_SECURE'] = True
+    app.config['JWT_COOKIE_SAMESITE'] = 'None'
+    app.config['JWT_COOKIE_CSRF_PROTECT'] = False
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 900
     app.config['JWT_REFRESH_TOKEN_EXPIRES'] = 2592000
 
