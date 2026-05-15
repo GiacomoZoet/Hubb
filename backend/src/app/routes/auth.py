@@ -9,7 +9,6 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 from app import db
 from app.models.user import User, RefreshToken
 from app.models.workspace import WorkspaceMember
-from app.utils.email import send_confirmation_email
 from datetime import datetime, timedelta
 import bcrypt
 
@@ -29,22 +28,17 @@ def register():
     if User.query.filter_by(username=data['username']).first():
         return jsonify({'error': 'Username already taken'}), 409
 
-    try:
-        send_confirmation_email(data['email'])
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
     hashed = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt())
     user = User(
         username=data['username'],
         email=data['email'],
         password=hashed.decode('utf-8'),
-        confirmed=False
+        confirmed=True
     )
     db.session.add(user)
     db.session.commit()
 
-    return jsonify({'message': 'Check your email to confirm your account'}), 201
+    return jsonify({'message': 'Account created successfully'}), 201
 
 
 @auth_bp.route('/confirm/<token>', methods=['GET'])
