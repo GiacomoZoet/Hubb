@@ -94,6 +94,10 @@
         </div>
       </div>
     </section>
+
+    <footer class="py-4 text-center">
+      <p class="text-xs text-gray-400 dark:text-gray-600">Giacomo Zoet</p>
+    </footer>
   </div>
 </template>
 
