@@ -11,6 +11,8 @@ const routes = [
   { path: '/login',             component: LoginView },
   { path: '/register',          component: RegisterView },
   { path: '/confirm/:token',    component: () => import('@/views/ConfirmView.vue') },
+  { path: '/forgot-password',  component: () => import('@/views/ForgotPasswordView.vue') },
+  { path: '/reset-password/:token', component: () => import('@/views/ResetPasswordView.vue') },
   { path: '/create-workspace',  component: CreateWorkspaceView, meta: { requiresAuth: true } },
   {
     path: '/workspace/:slug',

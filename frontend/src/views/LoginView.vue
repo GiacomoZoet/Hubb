@@ -38,7 +38,10 @@
           {{ loading ? 'Signing in...' : 'Sign In' }}
         </button>
       </form>
-      <p class="text-center mt-6 text-gray-400 dark:text-gray-500 text-sm">
+      <p class="text-center mt-4 text-gray-400 dark:text-gray-500 text-sm">
+        <RouterLink to="/forgot-password" class="text-teal-primary hover:underline">Forgot password?</RouterLink>
+      </p>
+      <p class="text-center mt-3 text-gray-400 dark:text-gray-500 text-sm">
         Don't have an account?
         <RouterLink to="/register" class="text-teal-primary hover:underline">Register</RouterLink>
       </p>

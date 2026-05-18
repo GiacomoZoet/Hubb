@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, current_app
-from app.utils.email import send_confirmation_email
+from app.utils.email import send_confirmation_email, send_reset_email
 from flask_jwt_extended import (
     create_access_token, create_refresh_token,
     jwt_required, get_jwt_identity
@@ -113,6 +113,49 @@ def login():
         'access_token': access_token,
         'refresh_token': refresh_token
     }), 200
+
+
+@auth_bp.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    data = request.get_json()
+    email = data.get('email')
+    if not email:
+        return jsonify({'error': 'Email is required'}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if user:
+        try:
+            send_reset_email(email)
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+    return jsonify({'message': 'If that email exists, a reset link has been sent'}), 200
+
+
+@auth_bp.route('/reset-password/<token>', methods=['POST'])
+def reset_password(token):
+    s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    try:
+        email = s.loads(token, salt='password-reset', max_age=3600)
+    except SignatureExpired:
+        return jsonify({'error': 'Reset link has expired'}), 400
+    except BadSignature:
+        return jsonify({'error': 'Reset link is invalid'}), 400
+
+    data = request.get_json()
+    password = data.get('password')
+    if not password:
+        return jsonify({'error': 'Password is required'}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    user.password = hashed.decode('utf-8')
+    db.session.commit()
+
+    return jsonify({'message': 'Password updated'}), 200
 
 
 @auth_bp.route('/refresh', methods=['POST'])
