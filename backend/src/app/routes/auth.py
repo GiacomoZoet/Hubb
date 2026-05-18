@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, current_app
+from app.utils.email import send_confirmation_email
 from flask_jwt_extended import (
     create_access_token, create_refresh_token,
     jwt_required, get_jwt_identity
@@ -26,17 +27,22 @@ def register():
     if User.query.filter_by(username=data['username']).first():
         return jsonify({'error': 'Username already taken'}), 409
 
+    try:
+        send_confirmation_email(data['email'])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
     hashed = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt())
     user = User(
         username=data['username'],
         email=data['email'],
         password=hashed.decode('utf-8'),
-        confirmed=True
+        confirmed=False
     )
     db.session.add(user)
     db.session.commit()
 
-    return jsonify({'message': 'Account created successfully'}), 201
+    return jsonify({'message': 'Check your email to confirm your account'}), 201
 
 
 @auth_bp.route('/confirm/<token>', methods=['GET'])
