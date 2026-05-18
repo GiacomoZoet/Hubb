@@ -7,14 +7,20 @@
       :class="activePanel === tab.id ? 'text-teal-primary' : 'text-gray-400 dark:text-gray-500'"
       @click="$emit('update:activePanel', tab.id)"
     >
-      <span class="text-base leading-none">{{ tab.icon }}</span>
+      <div class="relative">
+        <span class="text-base leading-none">{{ tab.icon }}</span>
+        <span
+          v-if="(tab.id === 'chat' && chatUnread) || (tab.id === 'dm' && dmUnread > 0)"
+          class="absolute -top-0.5 -right-1.5 w-2 h-2 bg-red-500 rounded-full block"
+        ></span>
+      </div>
       <span>{{ tab.label }}</span>
     </button>
   </div>
 </template>
 
 <script setup>
-defineProps(['activePanel'])
+defineProps(['activePanel', 'chatUnread', 'dmUnread'])
 defineEmits(['update:activePanel'])
 
 const tabs = [

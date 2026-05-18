@@ -15,6 +15,8 @@ export const useDMStore = defineStore('dm', () => {
     async function loadConversation(userId) {
         const res = await getConversation(userId)
         activeConversation.value = [...res.data.messages].reverse()
+        const contact = inbox.value.find(c => c.id === userId)
+        if (contact) contact.unread_count = 0
     }
 
     async function send(receiverId, content) {

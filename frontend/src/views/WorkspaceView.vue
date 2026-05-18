@@ -39,13 +39,15 @@
     <BottomTabBar
       class="md:hidden"
       :activePanel="activeMobilePanel"
+      :chatUnread="chatUnread"
+      :dmUnread="dmUnread"
       @update:activePanel="activeMobilePanel = $event"
     />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Sidebar from '@/components/Sidebar.vue'
 import ChannelList from '@/components/ChannelList.vue'
@@ -54,10 +56,15 @@ import { listWorkspaces, getWorkspace, listChannels } from '@/api/workspaces'
 import DirectMessagePanel from '@/components/DirectMessagePanel.vue'
 import BottomTabBar from '@/components/BottomTabBar.vue'
 import { useChatStore } from '@/stores/chat'
+import { useDMStore } from '@/stores/dm'
 
 const route = useRoute()
 const router = useRouter()
 const chatStore = useChatStore()
+const dmStore = useDMStore()
+
+const chatUnread = ref(false)
+const dmUnread = computed(() => dmStore.inbox.reduce((sum, c) => sum + (c.unread_count || 0), 0))
 
 const workspaces = ref([])
 const activeWorkspace = ref(null)
@@ -110,13 +117,25 @@ watch(() => chatStore.deletedWorkspaceId, (id) => {
   }
 })
 
+watch(() => chatStore.messages.length, (newLen, oldLen) => {
+  if (newLen > oldLen && activeMobilePanel.value !== 'chat') chatUnread.value = true
+})
+
+watch(activeMobilePanel, (panel) => {
+  if (panel === 'chat') chatUnread.value = false
+})
+
 onMounted(async () => {
   const wsRes = await listWorkspaces()
   workspaces.value = wsRes.data
   await loadWorkspace(route.params.slug)
 })
 
-watch(() => route.params.slug, (slug) => {
-  if (slug) loadWorkspace(slug)
+watch(() => route.params.slug, async (slug) => {
+  if (slug) {
+    const wsRes = await listWorkspaces()
+    workspaces.value = wsRes.data
+    await loadWorkspace(slug)
+  }
 })
 </script>
