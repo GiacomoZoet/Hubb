@@ -40,14 +40,14 @@
       class="md:hidden"
       :activePanel="activeMobilePanel"
       :chatUnread="chatUnread"
-      :dmUnread="dmUnread"
+      :dmUnread="dmStore.dmUnread"
       @update:activePanel="activeMobilePanel = $event"
     />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Sidebar from '@/components/Sidebar.vue'
 import ChannelList from '@/components/ChannelList.vue'
@@ -64,7 +64,6 @@ const chatStore = useChatStore()
 const dmStore = useDMStore()
 
 const chatUnread = ref(false)
-const dmUnread = computed(() => dmStore.inbox.reduce((sum, c) => sum + (c.unread_count || 0), 0))
 
 const workspaces = ref([])
 const activeWorkspace = ref(null)

@@ -201,8 +201,9 @@ onMounted(async () => {
   invitations.value = res.data
 })
 
-watch(() => chatStore.newInvitation, (inv) => {
-  if (inv) invitations.value.unshift(inv)
+watch(() => chatStore.liveInvitations.length, () => {
+  const latest = chatStore.liveInvitations[chatStore.liveInvitations.length - 1]
+  if (latest) invitations.value.unshift(latest)
 })
 
 function handleToggleDark() {

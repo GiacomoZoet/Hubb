@@ -9,7 +9,7 @@ export const useChatStore = defineStore('chat', () => {
     const typingUsers = ref([])
     const socket = shallowRef(null)
     const deletedWorkspaceId = ref(null)
-    const newInvitation = ref(null)
+    const liveInvitations = ref([])
 
     function connectSocket() {
         if (socket.value) return
@@ -33,12 +33,7 @@ export const useChatStore = defineStore('chat', () => {
             if (dmStore.activeUser?.id === dm.sender_id) {
                 dmStore.activeConversation.push(dm)
             } else {
-                const contact = dmStore.inbox.find(c => c.id === dm.sender_id)
-                if (contact) {
-                    contact.unread_count = (contact.unread_count || 0) + 1
-                } else {
-                    dmStore.inbox.push({ id: dm.sender_id, username: dm.sender_username, unread_count: 1 })
-                }
+                dmStore.incrementUnread(dm.sender_id, dm.sender_username)
             }
         })
 
@@ -47,7 +42,7 @@ export const useChatStore = defineStore('chat', () => {
         })
 
         socket.value.on('new_invitation', (data) => {
-            newInvitation.value = data
+            liveInvitations.value.push(data)
         })
 
         socket.value.on('user_typing', (data) => {
@@ -59,7 +54,6 @@ export const useChatStore = defineStore('chat', () => {
             }
         })
     }
-
 
     function joinWorkspace(workspaceId) {
         socket.value?.emit('join_workspace_room', { workspace_id: workspaceId })
@@ -82,7 +76,5 @@ export const useChatStore = defineStore('chat', () => {
         messages.value = [...res.data.messages].reverse()
     }
 
-
-
-    return { messages, typingUsers, socket, deletedWorkspaceId, newInvitation, connectSocket, joinWorkspace, joinChannel, leaveChannel, sendTyping, loadMessages }
+    return { messages, typingUsers, socket, deletedWorkspaceId, liveInvitations, connectSocket, joinWorkspace, joinChannel, leaveChannel, sendTyping, loadMessages }
 })
