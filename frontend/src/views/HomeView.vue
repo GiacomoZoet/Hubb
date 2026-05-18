@@ -17,16 +17,16 @@
     <section class="flex-1 max-w-[1100px] mx-auto w-full px-4 py-10 md:px-12 md:py-20 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
       <div>
         <p class="text-xs font-semibold uppercase tracking-widest text-teal-primary mb-4">Real-time messaging</p>
-        <h1 class="text-5xl font-bold leading-tight text-teal-text dark:text-gray-100 mb-5">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-teal-text dark:text-gray-100 mb-5">
           Fast chat.<br><span class="text-teal-primary">Zero bloat.</span>
         </h1>
         <p class="text-base text-teal-muted dark:text-gray-400 leading-relaxed mb-9 max-w-md">
           huubs, channels, and direct messages — everything your team needs, and nothing it doesn't.
         </p>
-        <div class="flex gap-4 items-center">
+        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-center">
           <RouterLink
             to="/register"
-            class="px-7 py-3 bg-teal-primary text-white rounded-xl text-sm font-semibold hover:bg-teal-dark transition-colors"
+            class="px-7 py-3 bg-teal-primary text-white rounded-xl text-sm font-semibold hover:bg-teal-dark transition-colors text-center"
           >Get Started →</RouterLink>
           <RouterLink to="/login" class="text-sm text-teal-primary font-medium hover:underline">
             Already have an account? Sign in
@@ -42,7 +42,7 @@
           <span class="ml-1 text-white text-xs font-semibold">University Squad</span>
         </div>
         <div class="flex h-64">
-          <div class="w-40 bg-teal-dark flex-shrink-0 px-3 py-3">
+          <div class="hidden sm:block w-40 bg-teal-dark flex-shrink-0 px-3 py-3">
             <p class="text-[10px] font-semibold uppercase tracking-wider text-white/50 mb-2">Channels</p>
             <div class="text-xs text-white/90 bg-white/15 rounded px-2 py-1 mb-1"># general</div>
             <div class="text-xs text-white/60 px-2 py-1 mb-1"># project</div>
