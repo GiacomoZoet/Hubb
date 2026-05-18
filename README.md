@@ -1,4 +1,4 @@
-# iMessageU
+# Huub
 
 A real-time team messaging web app built as a final year university project. Think Slack but simpler — workspaces, channels, direct messages, and live updates over WebSocket.
 
