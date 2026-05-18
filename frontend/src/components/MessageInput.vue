@@ -1,5 +1,5 @@
 <template>
-  <div class="px-4 py-3 border-t border-teal-border dark:border-gray-700 shrink-0">
+  <div class="px-4 py-3 border-t border-teal-border dark:border-gray-700 shrink-0 pb-safe">
     <div class="flex items-center gap-2 bg-teal-lighter dark:bg-gray-800 border border-teal-border dark:border-gray-700 rounded-xl px-4 py-2.5 focus-within:ring-2 focus-within:ring-teal-primary transition-shadow">
       <input
         v-model="content"

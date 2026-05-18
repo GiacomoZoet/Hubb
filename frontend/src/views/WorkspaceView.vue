@@ -1,39 +1,45 @@
 <template>
-  <div class="flex h-screen overflow-hidden bg-teal-lighter dark:bg-gray-900">
-    <Sidebar
-      class="hidden md:flex"
-      :workspaces="workspaces"
-      :activeWorkspace="activeWorkspace"
-      @selectWorkspace="handleSelectWorkspace"
-    />
-    <ChannelList
-      :channels="channels"
-      :activeChannel="activeChannel"
-      :workspaceId="activeWorkspace?.id"
-      :workspaceName="activeWorkspace?.name"
-      :workspaces="workspaces"
-      :activeWorkspace="activeWorkspace"
-      :class="activeMobilePanel === 'channels' ? 'w-full md:w-[220px]' : 'hidden md:flex md:w-[220px]'"
-      @selectChannel="handleSelectChannel"
-      @channelCreated="reloadChannels"
-      @showDM="activeMobilePanel = 'dm'"
-      @selectWorkspace="handleSelectWorkspace"
-    />
-    <ChatArea
-      v-if="activeChannel"
-      :channel="activeChannel"
-      :class="activeMobilePanel === 'chat' ? 'flex-1 min-w-0' : 'hidden md:flex flex-1 min-w-0'"
-      @back="activeMobilePanel = 'channels'"
-    />
-    <div
-      v-else
-      :class="activeMobilePanel === 'chat' ? 'flex flex-1 items-center justify-center text-sm text-gray-400 dark:text-gray-500' : 'hidden md:flex flex-1 items-center justify-center text-sm text-gray-400 dark:text-gray-500'"
-    >
-      Select a channel to start chatting
+  <div class="flex flex-col h-dvh bg-teal-lighter dark:bg-gray-900">
+    <div class="flex flex-1 overflow-hidden">
+      <Sidebar
+        class="hidden md:flex"
+        :workspaces="workspaces"
+        :activeWorkspace="activeWorkspace"
+        @selectWorkspace="handleSelectWorkspace"
+      />
+      <ChannelList
+        :channels="channels"
+        :activeChannel="activeChannel"
+        :workspaceId="activeWorkspace?.id"
+        :workspaceName="activeWorkspace?.name"
+        :workspaces="workspaces"
+        :activeWorkspace="activeWorkspace"
+        :class="activeMobilePanel === 'channels' ? 'w-full md:w-[220px]' : 'hidden md:flex md:w-[220px]'"
+        @selectChannel="handleSelectChannel"
+        @channelCreated="reloadChannels"
+        @selectWorkspace="handleSelectWorkspace"
+      />
+      <ChatArea
+        v-if="activeChannel"
+        :channel="activeChannel"
+        :class="activeMobilePanel === 'chat' ? 'flex-1 min-w-0' : 'hidden md:flex flex-1 min-w-0'"
+        @back="activeMobilePanel = 'channels'"
+      />
+      <div
+        v-else
+        :class="activeMobilePanel === 'chat' ? 'flex flex-1 items-center justify-center text-sm text-gray-400 dark:text-gray-500' : 'hidden md:flex flex-1 items-center justify-center text-sm text-gray-400 dark:text-gray-500'"
+      >
+        Select a channel to start chatting
+      </div>
+      <DirectMessagePanel
+        :class="activeMobilePanel === 'dm' ? 'w-full md:w-[240px]' : 'hidden md:flex md:w-[240px]'"
+        @back="activeMobilePanel = 'channels'"
+      />
     </div>
-    <DirectMessagePanel
-      :class="activeMobilePanel === 'dm' ? 'w-full md:w-[240px]' : 'hidden md:flex md:w-[240px]'"
-      @back="activeMobilePanel = 'channels'"
+    <BottomTabBar
+      class="md:hidden"
+      :activePanel="activeMobilePanel"
+      @update:activePanel="activeMobilePanel = $event"
     />
   </div>
 </template>
@@ -46,6 +52,7 @@ import ChannelList from '@/components/ChannelList.vue'
 import ChatArea from '@/components/ChatArea.vue'
 import { listWorkspaces, getWorkspace, listChannels } from '@/api/workspaces'
 import DirectMessagePanel from '@/components/DirectMessagePanel.vue'
+import BottomTabBar from '@/components/BottomTabBar.vue'
 
 
 const route = useRoute()

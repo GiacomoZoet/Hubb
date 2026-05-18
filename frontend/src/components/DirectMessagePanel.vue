@@ -1,5 +1,5 @@
 <template>
-  <div class="shrink-0 flex flex-col bg-teal-light dark:bg-gray-800 border-l border-teal-border dark:border-gray-700 h-screen overflow-hidden">
+  <div class="shrink-0 flex flex-col bg-teal-light dark:bg-gray-800 border-l border-teal-border dark:border-gray-700 h-dvh overflow-hidden">
 
     <!-- Inbox -->
     <div v-if="!dmStore.activeUser" class="flex flex-col h-full">
@@ -74,7 +74,7 @@
           <span class="text-[10px] text-gray-400 dark:text-gray-500 px-1">{{ formatTime(msg.created_at) }}</span>
         </div>
       </div>
-      <div class="px-3 py-2.5 border-t border-teal-border dark:border-gray-700 flex gap-2 shrink-0">
+      <div class="px-3 py-2.5 border-t border-teal-border dark:border-gray-700 flex gap-2 shrink-0 pb-safe">
         <input
           v-model="newMessage"
           :placeholder="`Message ${dmStore.activeUser.username}`"

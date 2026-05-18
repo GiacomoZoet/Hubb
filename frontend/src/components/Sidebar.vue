@@ -1,5 +1,5 @@
 <template>
-  <div class="hidden md:flex w-[60px] shrink-0 flex-col items-center py-3 gap-2 bg-teal-primary dark:bg-gray-950 h-screen">
+  <div class="hidden md:flex w-[60px] shrink-0 flex-col items-center py-3 gap-2 bg-teal-primary dark:bg-gray-950 h-dvh">
     <div class="font-bold text-sm text-white dark:text-teal-primary mb-2 tracking-tight">hub</div>
     <div class="flex flex-col gap-2 flex-1 w-full items-center">
       <div

@@ -1,5 +1,5 @@
 <template>
-  <div class="shrink-0 flex flex-col bg-teal-light dark:bg-gray-800 border-r border-teal-border dark:border-gray-700 h-screen overflow-hidden">
+  <div class="shrink-0 flex flex-col bg-teal-light dark:bg-gray-800 border-r border-teal-border dark:border-gray-700 h-dvh overflow-hidden">
     <div class="px-3 py-3.5 border-b border-teal-border dark:border-gray-700 shrink-0 flex items-center justify-between gap-2">
       <div
         class="font-bold text-sm text-teal-text dark:text-gray-100 truncate cursor-pointer hover:opacity-75"
@@ -104,13 +104,6 @@
       </button>
     </div>
 
-    <button
-      class="md:hidden px-4 py-2.5 text-xs text-teal-primary hover:text-teal-dark border-t border-teal-border dark:border-gray-700 text-left transition-colors shrink-0"
-      @click="$emit('showDM')"
-    >
-      💬 Direct Messages
-    </button>
-
     <!-- New Channel modal -->
     <div v-if="showModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click.self="showModal = false">
       <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 w-80 border border-teal-border dark:border-gray-700 flex flex-col gap-4 shadow-lg">
@@ -185,7 +178,7 @@ import { useRouter } from 'vue-router'
 import { toggleDarkMode } from '@/utils/darkMode'
 
 const props = defineProps(['channels', 'activeChannel', 'workspaceId', 'workspaceName', 'workspaces', 'activeWorkspace'])
-const emit = defineEmits(['selectChannel', 'channelCreated', 'showDM', 'selectWorkspace'])
+const emit = defineEmits(['selectChannel', 'channelCreated', 'selectWorkspace'])
 
 const authStore = useAuthStore()
 const router = useRouter()
