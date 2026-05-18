@@ -1,5 +1,5 @@
 <template>
-  <div class="shrink-0 flex flex-col bg-teal-light dark:bg-gray-800 border-l border-teal-border dark:border-gray-700 h-dvh overflow-hidden">
+  <div class="shrink-0 flex flex-col bg-teal-light dark:bg-gray-800 border-l border-teal-border dark:border-gray-700 h-full overflow-hidden">
 
     <!-- Inbox -->
     <div v-if="!dmStore.activeUser" class="flex flex-col h-full">

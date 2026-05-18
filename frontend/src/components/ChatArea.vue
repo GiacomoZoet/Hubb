@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-1 flex flex-col bg-white dark:bg-gray-900 min-w-0 h-dvh overflow-hidden">
+  <div class="flex-1 flex flex-col bg-white dark:bg-gray-900 min-w-0 h-full overflow-hidden">
     <div class="flex items-center gap-2 px-5 py-3.5 border-b border-teal-border dark:border-gray-700 shrink-0">
       <button
         @click="$emit('back')"

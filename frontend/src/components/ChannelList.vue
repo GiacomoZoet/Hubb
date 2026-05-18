@@ -1,5 +1,5 @@
 <template>
-  <div class="shrink-0 flex flex-col bg-teal-light dark:bg-gray-800 border-r border-teal-border dark:border-gray-700 h-dvh overflow-hidden">
+  <div class="shrink-0 flex flex-col bg-teal-light dark:bg-gray-800 border-r border-teal-border dark:border-gray-700 h-full overflow-hidden">
     <div class="px-3 py-3.5 border-b border-teal-border dark:border-gray-700 shrink-0 flex items-center justify-between gap-2">
       <div
         class="font-bold text-sm text-teal-text dark:text-gray-100 truncate cursor-pointer hover:opacity-75"
