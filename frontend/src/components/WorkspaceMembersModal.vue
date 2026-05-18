@@ -14,6 +14,28 @@
         </div>
       </div>
 
+      <div v-if="myRole === 'owner'" class="flex flex-col gap-2 pt-2 border-t border-teal-border dark:border-gray-700">
+        <div v-if="!showInvite">
+          <button
+            @click="showInvite = true"
+            class="px-4 py-2 rounded-lg text-sm text-teal-primary hover:bg-teal-lighter dark:hover:bg-gray-700 transition-colors text-left w-full"
+          >+ Invite member</button>
+        </div>
+        <div v-else class="flex flex-col gap-2">
+          <input
+            v-model="inviteEmail"
+            placeholder="email@example.com"
+            type="email"
+            class="w-full px-3 py-2 rounded-lg border border-teal-border dark:border-gray-600 bg-teal-lighter dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-primary"
+          />
+          <p v-if="inviteError" class="text-xs text-red-500">{{ inviteError }}</p>
+          <div class="flex gap-2 justify-end">
+            <button @click="showInvite = false; inviteEmail = ''; inviteError = ''" class="px-3 py-1.5 rounded-lg text-sm text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Cancel</button>
+            <button @click="sendInvite" class="px-3 py-1.5 rounded-lg text-sm bg-teal-primary text-white font-semibold hover:bg-teal-dark transition-colors">Send</button>
+          </div>
+        </div>
+      </div>
+
       <div class="flex flex-col gap-2 pt-2 border-t border-teal-border dark:border-gray-700">
         <button
           v-if="myRole && myRole !== 'owner'"
@@ -34,7 +56,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { listMembers, leaveWorkspace, deleteWorkspace, listWorkspaces } from '@/api/workspaces'
+import { listMembers, leaveWorkspace, deleteWorkspace, listWorkspaces, inviteMember } from '@/api/workspaces'
 
 const props = defineProps(['workspaceId', 'workspaceName'])
 const emit = defineEmits(['close'])
@@ -47,6 +69,22 @@ onMounted(async () => {
   const res = await listMembers(props.workspaceId)
   members.value = res.data
 })
+
+const showInvite = ref(false)
+const inviteEmail = ref('')
+const inviteError = ref('')
+
+async function sendInvite() {
+  if (!inviteEmail.value.trim()) return
+  inviteError.value = ''
+  try {
+    await inviteMember(props.workspaceId, { email: inviteEmail.value.trim() })
+    showInvite.value = false
+    inviteEmail.value = ''
+  } catch (err) {
+    inviteError.value = err.response?.data?.error || 'Something went wrong'
+  }
+}
 
 const myRole = computed(() => {
   const me = members.value.find(m => m.id === authStore.user?.id)
