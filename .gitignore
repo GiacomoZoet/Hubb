@@ -5,19 +5,9 @@
 .idea/
 .vscode/
 
-# Claude Code
-.claude/
-
 # Python (root venv)
 .venv/
 venv/
 env/
 __pycache__/
 *.pyc
-
-# Brainstorming sessions
-.superpowers/
-
-# Project meta (not for version control)
-CLAUDE.md
-docs/
