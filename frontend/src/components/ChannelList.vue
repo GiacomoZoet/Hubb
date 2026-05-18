@@ -1,10 +1,14 @@
 <template>
   <div class="shrink-0 flex flex-col bg-teal-light dark:bg-gray-800 border-r border-teal-border dark:border-gray-700 h-full overflow-hidden">
     <div class="px-3 py-3.5 border-b border-teal-border dark:border-gray-700 shrink-0 flex items-center justify-between gap-2">
-      <div
-        class="font-bold text-sm text-teal-text dark:text-gray-100 truncate cursor-pointer hover:opacity-75"
-        @click="showMembersModal = true"
-      >{{ workspaceName || 'Workspace' }}</div>
+      <div class="flex items-center gap-1 min-w-0">
+        <span class="font-bold text-sm text-teal-text dark:text-gray-100 truncate">{{ workspaceName || 'Workspace' }}</span>
+        <button
+          @click="showMembersModal = true"
+          class="text-teal-text/40 dark:text-gray-500 hover:text-teal-text dark:hover:text-gray-300 text-sm shrink-0 transition-colors"
+          title="Manage workspace"
+        >⚙</button>
+      </div>
       <div class="flex items-center gap-2 shrink-0">
         <button
           @click="handleToggleDark"

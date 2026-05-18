@@ -10,8 +10,8 @@ class Workspace(db.Model):
     owner_id   = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    channels = db.relationship('Channel', backref='workspace', lazy=True)
-    members  = db.relationship('WorkspaceMember', backref='workspace', lazy=True)
+    channels = db.relationship('Channel', backref='workspace', lazy=True, passive_deletes=True)
+    members  = db.relationship('WorkspaceMember', backref='workspace', lazy=True, passive_deletes=True)
 
     def to_dict(self):
         return {

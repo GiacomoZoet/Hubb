@@ -37,6 +37,16 @@ def handle_disconnect():
 
 
 # ============================================================
+# JOIN WORKSPACE ROOM (for workspace-level events)
+# ============================================================
+@socketio.on('join_workspace_room')
+def handle_join_workspace(data):
+    workspace_id = data.get('workspace_id')
+    if workspace_id:
+        join_room(f'workspace_{workspace_id}')
+
+
+# ============================================================
 # JOIN CHANNEL ROOM
 # ============================================================
 @socketio.on('join_room')

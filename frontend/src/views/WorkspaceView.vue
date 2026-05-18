@@ -53,10 +53,11 @@ import ChatArea from '@/components/ChatArea.vue'
 import { listWorkspaces, getWorkspace, listChannels } from '@/api/workspaces'
 import DirectMessagePanel from '@/components/DirectMessagePanel.vue'
 import BottomTabBar from '@/components/BottomTabBar.vue'
-
+import { useChatStore } from '@/stores/chat'
 
 const route = useRoute()
 const router = useRouter()
+const chatStore = useChatStore()
 
 const workspaces = ref([])
 const activeWorkspace = ref(null)
@@ -67,6 +68,12 @@ const activeMobilePanel = ref('channels')
 async function loadWorkspace(slug) {
   const res = await getWorkspace(slug)
   activeWorkspace.value = res.data
+  chatStore.connectSocket()
+  if (chatStore.socket?.connected) {
+    chatStore.joinWorkspace(res.data.id)
+  } else {
+    chatStore.socket?.once('connect', () => chatStore.joinWorkspace(res.data.id))
+  }
   const chRes = await listChannels(res.data.id)
   channels.value = chRes.data
   if (chRes.data.length > 0) activeChannel.value = chRes.data[0]
@@ -85,6 +92,23 @@ async function reloadChannels() {
   const chRes = await listChannels(activeWorkspace.value.id)
   channels.value = chRes.data
 }
+
+async function goToNextWorkspace(deletedId) {
+  const res = await listWorkspaces()
+  const remaining = res.data.filter(w => w.id !== deletedId)
+  if (remaining.length > 0) {
+    router.push(`/workspace/${remaining[0].slug}`)
+  } else {
+    router.push('/create-workspace')
+  }
+}
+
+watch(() => chatStore.deletedWorkspaceId, (id) => {
+  if (id && activeWorkspace.value?.id === id) {
+    chatStore.deletedWorkspaceId = null
+    goToNextWorkspace(id)
+  }
+})
 
 onMounted(async () => {
   const wsRes = await listWorkspaces()

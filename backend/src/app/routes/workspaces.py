@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app import db
+from app import db, socketio
 from app.models.workspace import Workspace, WorkspaceMember, WorkspaceInvitation
 from app.models.user import User
 from app.utils.decorators import workspace_member_required, workspace_admin_required
@@ -254,6 +254,7 @@ def delete_workspace(workspace_id):
     if workspace.owner_id != user_id:
         return jsonify({'error': 'Only the owner can delete this workspace'}), 403
 
+    socketio.emit('workspace_deleted', {'workspace_id': workspace_id}, room=f'workspace_{workspace_id}')
     db.session.delete(workspace)
     db.session.commit()
     return jsonify({'message': 'Workspace deleted'}), 200
