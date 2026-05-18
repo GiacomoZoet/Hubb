@@ -157,6 +157,7 @@ def invite_member(workspace_id):
     if existing_invite:
         return jsonify({'error': 'Invitation already sent'}), 409
 
+    workspace = Workspace.query.get(workspace_id)
     invite = WorkspaceInvitation(
         workspace_id=workspace_id,
         invited_by=user_id,
@@ -164,6 +165,12 @@ def invite_member(workspace_id):
     )
     db.session.add(invite)
     db.session.commit()
+
+    socketio.emit('new_invitation', {
+        **invite.to_dict(),
+        'workspace_name': workspace.name,
+        'workspace_slug': workspace.slug,
+    }, room=f'user_{user.id}')
 
     return jsonify({'message': 'Invitation sent'}), 201
 

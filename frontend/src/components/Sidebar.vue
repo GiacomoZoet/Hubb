@@ -109,19 +109,25 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 import UserAvatar from './UserAvatar.vue'
 import { toggleDarkMode } from '@/utils/darkMode'
 import { getInvitations, acceptInvitation, declineInvitation, createWorkspace } from '@/api/workspaces'
+import { useChatStore } from '@/stores/chat'
 
 const isDark = ref(false)
+const chatStore = useChatStore()
 
 onMounted(async () => {
   isDark.value = document.documentElement.classList.contains('dark')
   const res = await getInvitations()
   invitations.value = res.data
+})
+
+watch(() => chatStore.newInvitation, (inv) => {
+  if (inv) invitations.value.unshift(inv)
 })
 
 function handleToggleDark() {

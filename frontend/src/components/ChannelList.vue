@@ -40,7 +40,7 @@
         <div class="relative md:hidden">
           <div
             @click="showProfile = !showProfile"
-            class="w-8 h-8 rounded-full bg-teal-primary text-white border-2 border-teal-dark flex items-center justify-center font-bold text-xs cursor-pointer hover:opacity-80 transition-all"
+            :class="['w-8 h-8 rounded-full text-white flex items-center justify-center font-bold text-xs cursor-pointer hover:opacity-80 transition-all', userColor(authStore.user?.username)]"
             :title="authStore.user?.username"
           >{{ authStore.user?.username?.charAt(0).toUpperCase() }}</div>
           <div v-if="showProfile" class="fixed inset-0 z-40" @click="showProfile = false"></div>
@@ -174,18 +174,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { createChannel, inviteMember, getInvitations, acceptInvitation, declineInvitation, createWorkspace } from '@/api/workspaces'
 import WorkspaceMembersModal from './WorkspaceMembersModal.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 import { toggleDarkMode } from '@/utils/darkMode'
+import { useChatStore } from '@/stores/chat'
+import { userColor } from '@/utils/userColor'
 
 const props = defineProps(['channels', 'activeChannel', 'workspaceId', 'workspaceName', 'workspaces', 'activeWorkspace'])
 const emit = defineEmits(['selectChannel', 'channelCreated', 'selectWorkspace'])
 
 const authStore = useAuthStore()
 const router = useRouter()
+const chatStore = useChatStore()
 
 const isDark = ref(false)
 const invitations = ref([])
@@ -196,6 +199,10 @@ onMounted(async () => {
   isDark.value = document.documentElement.classList.contains('dark')
   const res = await getInvitations()
   invitations.value = res.data
+})
+
+watch(() => chatStore.newInvitation, (inv) => {
+  if (inv) invitations.value.unshift(inv)
 })
 
 function handleToggleDark() {

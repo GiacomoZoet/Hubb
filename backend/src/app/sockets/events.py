@@ -37,6 +37,17 @@ def handle_disconnect():
 
 
 # ============================================================
+# JOIN USER ROOM (for DMs and personal notifications)
+# ============================================================
+@socketio.on('join_user_room')
+def handle_join_user_room(data):
+    token = data.get('token')
+    user_id = get_user_from_token(token)
+    if user_id:
+        join_room(f'user_{user_id}')
+
+
+# ============================================================
 # JOIN WORKSPACE ROOM (for workspace-level events)
 # ============================================================
 @socketio.on('join_workspace_room')

@@ -7,10 +7,13 @@
         <div
           v-for="m in members"
           :key="m.id"
-          class="flex items-center justify-between px-2 py-1.5 rounded-lg text-sm text-gray-700 dark:text-gray-300"
+          class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm text-gray-700 dark:text-gray-300"
         >
-          <span>{{ m.username }}</span>
-          <span class="text-xs text-gray-400 dark:text-gray-500 capitalize">{{ m.role }}</span>
+          <div :class="['w-7 h-7 rounded-full shrink-0 flex items-center justify-center font-bold text-xs text-white', userColor(m.username)]">
+            {{ m.username.charAt(0).toUpperCase() }}
+          </div>
+          <span class="flex-1 truncate">{{ m.username }}</span>
+          <span class="text-xs text-gray-400 dark:text-gray-500 capitalize shrink-0">{{ m.role }}</span>
         </div>
       </div>
 
@@ -54,6 +57,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { userColor } from '@/utils/userColor'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { listMembers, leaveWorkspace, deleteWorkspace, listWorkspaces, inviteMember } from '@/api/workspaces'

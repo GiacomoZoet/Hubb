@@ -9,6 +9,7 @@ export const useChatStore = defineStore('chat', () => {
     const typingUsers = ref([])
     const socket = shallowRef(null)
     const deletedWorkspaceId = ref(null)
+    const newInvitation = ref(null)
 
     function connectSocket() {
         if (socket.value?.connected) return
@@ -16,6 +17,11 @@ export const useChatStore = defineStore('chat', () => {
         socket.value = io(import.meta.env.VITE_API_URL || '/', {
             withCredentials: true,
             transports: ['websocket'],
+        })
+
+        socket.value.on('connect', () => {
+            const token = localStorage.getItem('access_token')
+            if (token) socket.value.emit('join_user_room', { token })
         })
 
         socket.value.on('new_message', (msg) => {
@@ -38,6 +44,10 @@ export const useChatStore = defineStore('chat', () => {
 
         socket.value.on('workspace_deleted', (data) => {
             deletedWorkspaceId.value = data.workspace_id
+        })
+
+        socket.value.on('new_invitation', (data) => {
+            newInvitation.value = data
         })
 
         socket.value.on('user_typing', (data) => {
@@ -74,5 +84,5 @@ export const useChatStore = defineStore('chat', () => {
 
 
 
-    return { messages, typingUsers, socket, deletedWorkspaceId, connectSocket, joinWorkspace, joinChannel, leaveChannel, sendTyping, loadMessages }
+    return { messages, typingUsers, socket, deletedWorkspaceId, newInvitation, connectSocket, joinWorkspace, joinChannel, leaveChannel, sendTyping, loadMessages }
 })
