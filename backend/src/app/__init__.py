@@ -25,11 +25,7 @@ def create_app():
         f"@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
     )
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['JWT_TOKEN_LOCATION'] = ['cookies']
-    app.config['JWT_COOKIE_HTTPONLY'] = True
-    app.config['JWT_COOKIE_SECURE'] = True
-    app.config['JWT_COOKIE_SAMESITE'] = 'None'
-    app.config['JWT_COOKIE_CSRF_PROTECT'] = False
+    app.config['JWT_TOKEN_LOCATION'] = ['headers']
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 900
     app.config['JWT_REFRESH_TOKEN_EXPIRES'] = 2592000
 

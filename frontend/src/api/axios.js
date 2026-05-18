@@ -2,19 +2,33 @@ import axios from 'axios'
 
 const api = axios.create({
     baseURL: (import.meta.env.VITE_API_URL || '') + '/api',
-    withCredentials: true  // sends cookies with every request
 })
 
-// Auto-refresh token on 401
+api.interceptors.request.use(config => {
+    const token = localStorage.getItem('access_token')
+    if (token) config.headers.Authorization = `Bearer ${token}`
+    return config
+})
+
 api.interceptors.response.use(
     response => response,
     async error => {
         if (error.response?.status === 401 && !error.config._retry) {
             error.config._retry = true
             try {
-                await axios.post((import.meta.env.VITE_API_URL || '') + '/api/auth/refresh', {}, { withCredentials: true })
+                const refreshToken = localStorage.getItem('refresh_token')
+                const res = await axios.post(
+                    (import.meta.env.VITE_API_URL || '') + '/api/auth/refresh',
+                    {},
+                    { headers: { Authorization: `Bearer ${refreshToken}` } }
+                )
+                const newToken = res.data.access_token
+                localStorage.setItem('access_token', newToken)
+                error.config.headers.Authorization = `Bearer ${newToken}`
                 return api(error.config)
             } catch {
+                localStorage.removeItem('access_token')
+                localStorage.removeItem('refresh_token')
                 const pub = ['/', '/login', '/register']
                 if (!pub.includes(window.location.pathname)) {
                     window.location.href = '/login'

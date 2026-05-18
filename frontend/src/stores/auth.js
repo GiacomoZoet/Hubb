@@ -12,11 +12,16 @@ export const useAuthStore = defineStore('auth', {
             this.user = res.data
         },
         async login(credentials) {
-            await authApi.login(credentials)
-            await this.fetchUser()
+            const res = await authApi.login(credentials)
+            localStorage.setItem('access_token', res.data.access_token)
+            localStorage.setItem('refresh_token', res.data.refresh_token)
+            this.user = res.data.user
         },
         async logout() {
-            await authApi.logout()
+            const refreshToken = localStorage.getItem('refresh_token')
+            await authApi.logout({ refresh_token: refreshToken }).catch(() => {})
+            localStorage.removeItem('access_token')
+            localStorage.removeItem('refresh_token')
             this.user = null
         }
     }

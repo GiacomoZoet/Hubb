@@ -4,10 +4,10 @@
       <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">hubb</h1>
 
       <div v-if="registered">
-        <p class="text-sm text-teal-primary font-semibold mt-4 mb-2">Check your email</p>
-        <p class="text-sm text-gray-500 dark:text-gray-400">We sent a confirmation link to <strong>{{ registeredEmail }}</strong>. Click it to activate your account.</p>
+        <p class="text-sm text-teal-primary font-semibold mt-4 mb-2">Account created!</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Your account is ready. Sign in to get started.</p>
         <p class="text-center mt-6 text-gray-400 dark:text-gray-500 text-sm">
-          <RouterLink to="/login" class="text-teal-primary hover:underline">Back to sign in</RouterLink>
+          <RouterLink to="/login" class="text-teal-primary hover:underline">Sign in</RouterLink>
         </p>
       </div>
 
