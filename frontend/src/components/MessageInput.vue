@@ -16,18 +16,27 @@
         Send
       </button>
     </div>
+    <p v-if="error" class="mt-1 text-xs text-red-500 px-1">{{ error }}</p>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useChatStore } from '@/stores/chat'
 import { sendMessage as apiSendMessage } from '@/api/messages'
 
 const props = defineProps(['channelId'])
 const chatStore = useChatStore()
 const content = ref('')
+const error = ref('')
 let typingTimeout = null
+let errorTimeout = null
+
+function showError(msg) {
+  error.value = msg
+  clearTimeout(errorTimeout)
+  errorTimeout = setTimeout(() => { error.value = '' }, 3000)
+}
 
 async function sendMessage() {
   if (!content.value.trim()) return
@@ -35,7 +44,9 @@ async function sendMessage() {
     await apiSendMessage(props.channelId, { content: content.value })
     content.value = ''
   } catch (e) {
-    console.error('Failed to send message', e)
+    if (e.response?.status === 429) {
+      showError(e.response.data?.error || 'Slow down, too many messages')
+    }
   }
 }
 
@@ -45,4 +56,17 @@ function handleTyping() {
     chatStore.sendTyping(props.channelId)
   }, 300)
 }
+
+function handleRateLimited(data) {
+  showError(data?.error || 'Slow down, too many messages')
+}
+
+onMounted(() => {
+  chatStore.socket?.on('rate_limited', handleRateLimited)
+})
+
+onUnmounted(() => {
+  chatStore.socket?.off('rate_limited', handleRateLimited)
+  clearTimeout(errorTimeout)
+})
 </script>

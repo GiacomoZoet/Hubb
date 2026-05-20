@@ -3,6 +3,7 @@ from flask_jwt_extended import decode_token
 from app import socketio, db
 from app.models.message import Message
 from app.models.user import User
+from app.utils.decorators import check_rate_limit
 from datetime import datetime
 
 
@@ -86,6 +87,10 @@ def handle_message(data):
     token = data.get('token')
     user_id = get_user_from_token(token)
     if not user_id:
+        return
+
+    if not check_rate_limit(user_id):
+        emit('rate_limited', {'error': 'Slow down, too many messages'})
         return
 
     channel_id = data.get('channel_id')

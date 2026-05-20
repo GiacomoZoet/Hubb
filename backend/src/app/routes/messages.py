@@ -3,7 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db
 from app.models.message import Message, Reaction
 from app.models.channel import Channel, ChannelMember
-from app.utils.decorators import channel_access_required
+from app.utils.decorators import channel_access_required, rate_limited
 from app import db, socketio
 from app.models.user import User
 
@@ -55,6 +55,7 @@ def get_thread(channel_id, parent_id):
 
 @messages_bp.route('/<int:channel_id>', methods=['POST'])
 @jwt_required()
+@rate_limited
 @channel_access_required
 def send_message(channel_id):
     user_id = int(get_jwt_identity())

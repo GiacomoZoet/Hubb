@@ -1,7 +1,37 @@
 from functools import wraps
+from collections import defaultdict, deque
 from flask import jsonify
 from flask_jwt_extended import get_jwt_identity
 from app.models.workspace import WorkspaceMember
+import time
+
+_msg_timestamps = defaultdict(deque)
+_RATE_LIMIT = 5
+_RATE_WINDOW = 5
+
+
+def check_rate_limit(user_id):
+    now = time.time()
+    timestamps = _msg_timestamps[user_id]
+    while timestamps and now - timestamps[0] > _RATE_WINDOW:
+        timestamps.popleft()
+    count = len(timestamps)
+    print(f'[rate] user={user_id} count={count}/{_RATE_LIMIT}', flush=True)
+    if count >= _RATE_LIMIT:
+        print(f'[rate] BLOCKED user={user_id}', flush=True)
+        return False
+    timestamps.append(now)
+    return True
+
+
+def rate_limited(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        user_id = int(get_jwt_identity())
+        if not check_rate_limit(user_id):
+            return jsonify({'error': 'Slow down, too many messages'}), 429
+        return f(*args, **kwargs)
+    return decorated_function
 
 def workspace_member_required(f):
     @wraps(f)

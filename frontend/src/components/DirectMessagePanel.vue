@@ -78,19 +78,22 @@
           <span class="text-[10px] text-gray-400 dark:text-gray-500 px-1">{{ formatTime(msg.created_at) }}</span>
         </div>
       </div>
-      <div class="px-3 py-2.5 border-t border-teal-border dark:border-gray-700 flex gap-2 shrink-0 pb-safe">
-        <input
-          v-model="newMessage"
-          :placeholder="`Message ${dmStore.activeUser.username}`"
-          @keydown.enter="sendMessage"
-          class="flex-1 px-3 py-2 rounded-lg border border-teal-border dark:border-gray-600 bg-white dark:bg-gray-900 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-primary"
-        />
-        <button
-          @click="sendMessage"
-          class="bg-teal-primary text-white text-xs font-semibold px-3 py-2 rounded-lg hover:bg-teal-dark transition-colors"
-        >
-          Send
-        </button>
+      <div class="px-3 py-2.5 border-t border-teal-border dark:border-gray-700 shrink-0 pb-safe">
+        <div class="flex gap-2">
+          <input
+            v-model="newMessage"
+            :placeholder="`Message ${dmStore.activeUser.username}`"
+            @keydown.enter="sendMessage"
+            class="flex-1 px-3 py-2 rounded-lg border border-teal-border dark:border-gray-600 bg-white dark:bg-gray-900 text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-primary"
+          />
+          <button
+            @click="sendMessage"
+            class="bg-teal-primary text-white text-xs font-semibold px-3 py-2 rounded-lg hover:bg-teal-dark transition-colors"
+          >
+            Send
+          </button>
+        </div>
+        <p v-if="dmError" class="mt-1 text-xs text-red-500 px-1">{{ dmError }}</p>
       </div>
     </div>
 
@@ -111,10 +114,18 @@ const authStore = useAuthStore()
 defineEmits(['back'])
 
 const newMessage = ref('')
+const dmError = ref('')
 const showSearch = ref(false)
 const searchQuery = ref('')
 const searchResults = ref([])
 const messagesEl = ref(null)
+let errorTimeout = null
+
+function showDmError(msg) {
+  dmError.value = msg
+  clearTimeout(errorTimeout)
+  errorTimeout = setTimeout(() => { dmError.value = '' }, 3000)
+}
 
 onMounted(() => dmStore.loadInbox())
 
@@ -129,9 +140,15 @@ async function openConversation(user) {
 
 async function sendMessage() {
   if (!newMessage.value.trim()) return
-  await dmStore.send(dmStore.activeUser.id, newMessage.value)
-  newMessage.value = ''
-  scrollToBottom()
+  try {
+    await dmStore.send(dmStore.activeUser.id, newMessage.value)
+    newMessage.value = ''
+    scrollToBottom()
+  } catch (e) {
+    if (e.response?.status === 429) {
+      showDmError(e.response.data?.error || 'Slow down, too many messages')
+    }
+  }
 }
 
 async function searchUsers() {

@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import db, socketio
 from app.models.direct_message import DirectMessage
 from app.models.user import User
+from app.utils.decorators import rate_limited
 
 dm_bp = Blueprint('dm', __name__)
 
@@ -12,6 +13,7 @@ dm_bp = Blueprint('dm', __name__)
 # ============================================================
 @dm_bp.route('/<int:receiver_id>', methods=['POST'])
 @jwt_required()
+@rate_limited
 def send_dm(receiver_id):
     sender_id = int(get_jwt_identity())
     data = request.get_json()
