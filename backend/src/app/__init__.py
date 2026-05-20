@@ -51,6 +51,7 @@ def create_app():
     from app.routes.channels import channels_bp
     from app.routes.messages import messages_bp
     from app.routes.direct_messages import dm_bp
+    from app.routes.og import og_bp
 
     app.register_blueprint(auth_bp,       url_prefix='/api/auth')
     app.register_blueprint(users_bp,      url_prefix='/api/users')
@@ -58,6 +59,7 @@ def create_app():
     app.register_blueprint(channels_bp,   url_prefix='/api/channels')
     app.register_blueprint(messages_bp,   url_prefix='/api/messages')
     app.register_blueprint(dm_bp,         url_prefix='/api/dm')
+    app.register_blueprint(og_bp,         url_prefix='/api/og')
 
     @app.route('/healthz')
     def healthz():

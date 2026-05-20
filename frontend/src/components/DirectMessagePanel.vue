@@ -68,9 +68,13 @@
             :class="msg.sender_id === authStore.user?.id
               ? 'bg-teal-primary text-white rounded-tr-sm'
               : 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-tl-sm border border-teal-border dark:border-gray-600'"
-          >
-            {{ msg.content }}
-          </div>
+            v-html="linkify(msg.content)"
+          />
+          <LinkPreview
+            v-for="url in extractUrls(msg.content)"
+            :key="url"
+            :url="url"
+          />
           <span class="text-[10px] text-gray-400 dark:text-gray-500 px-1">{{ formatTime(msg.created_at) }}</span>
         </div>
       </div>
@@ -96,9 +100,11 @@
 <script setup>
 import { ref, watch, nextTick, onMounted } from 'vue'
 import { userColor } from '@/utils/userColor'
+import { linkify, extractUrls } from '@/utils/linkify'
 import { useDMStore } from '@/stores/dm'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/api/axios'
+import LinkPreview from './LinkPreview.vue'
 
 const dmStore = useDMStore()
 const authStore = useAuthStore()

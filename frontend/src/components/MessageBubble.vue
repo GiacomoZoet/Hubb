@@ -9,13 +9,20 @@
         <span class="text-[10px] text-gray-400 dark:text-gray-500">{{ formatTime(message.created_at) }}</span>
         <span v-if="message.is_edited" class="text-[10px] text-gray-400 dark:text-gray-500">(edited)</span>
       </div>
-      <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed break-words">{{ message.content }}</p>
+      <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed break-words" v-html="linkify(message.content)" />
+      <LinkPreview
+        v-for="url in extractUrls(message.content)"
+        :key="url"
+        :url="url"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
 import { userColor } from '@/utils/userColor'
+import { linkify, extractUrls } from '@/utils/linkify'
+import LinkPreview from './LinkPreview.vue'
 
 defineProps(['message'])
 
