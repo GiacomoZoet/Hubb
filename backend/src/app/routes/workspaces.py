@@ -141,7 +141,7 @@ def invite_member(workspace_id):
     user_id = int(get_jwt_identity())
     data = request.get_json()
 
-    user = User.query.filter_by(email=data.get('email')).first()
+    user = User.query.filter_by(username=data.get('username')).first()
     if not user:
         return jsonify({'error': 'User not found'}), 404
 

@@ -71,7 +71,7 @@ def list_channels(workspace_id):
 @jwt_required()
 def add_channel_member(channel_id):
     data = request.get_json()
-    user = User.query.filter_by(email=data.get('email')).first()
+    user = User.query.filter_by(username=data.get('username')).first()
     if not user:
         return jsonify({'error': 'User not found'}), 404
 

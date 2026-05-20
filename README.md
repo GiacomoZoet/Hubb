@@ -1,10 +1,10 @@
-# Huub
+# Hubb
 
 A real-time team messaging web app built as a final year university project. Think Slack but simpler — workspaces, channels, direct messages, and live updates over WebSocket.
 
 ## What it does
 
-- Create and join workspaces (called "huubs")
+- Create and join workspaces (called "hubbs")
 - Channels within each workspace with real-time messaging
 - Direct messages between users, also real-time
 - Invite members to workspaces by email

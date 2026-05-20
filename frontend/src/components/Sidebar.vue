@@ -1,6 +1,6 @@
 <template>
   <div class="hidden md:flex w-[60px] shrink-0 flex-col items-center py-3 gap-2 bg-teal-primary dark:bg-gray-950 h-full">
-    <div class="font-bold text-sm text-white dark:text-teal-primary mb-2 tracking-tight">hub</div>
+    <div class="font-bold text-sm text-white dark:text-teal-primary mb-2 tracking-tight">hubb</div>
     <div class="flex flex-col gap-2 flex-1 w-full items-center">
       <div
         v-for="ws in workspaces"
@@ -16,7 +16,7 @@
       </div>
       <div
         class="w-9 h-9 rounded-xl flex items-center justify-center text-lg cursor-pointer transition-all bg-white/25 text-white dark:bg-gray-800 dark:text-gray-400 hover:bg-white/40 dark:hover:bg-gray-700"
-        title="Create huub"
+        title="Create hubb"
         @click="showCreateWsModal = true"
       >+</div>
     </div>
@@ -24,7 +24,7 @@
     <!-- Create Workspace modal -->
     <div v-if="showCreateWsModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click.self="showCreateWsModal = false">
       <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 w-80 border border-teal-border dark:border-gray-700 flex flex-col gap-4 shadow-lg">
-        <h3 class="font-bold text-gray-900 dark:text-gray-100">New huub</h3>
+        <h3 class="font-bold text-gray-900 dark:text-gray-100">New hubb</h3>
         <input
           v-model="newWsName"
           placeholder="My Team"
@@ -178,7 +178,7 @@ async function handleCreateWs() {
     newWsName.value = ''
     router.push(`/workspace/${res.data.workspace.slug}`)
   } catch (e) {
-    createWsError.value = e.response?.data?.error || 'Failed to create huub'
+    createWsError.value = e.response?.data?.error || 'Failed to create hubb'
   } finally {
     createWsLoading.value = false
   }

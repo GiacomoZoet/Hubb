@@ -21,7 +21,7 @@
           Fast chat.<br><span class="text-teal-primary">Zero bloat.</span>
         </h1>
         <p class="text-base text-teal-muted dark:text-gray-400 leading-relaxed mb-9 max-w-md">
-          huubs, channels, and direct messages — everything your team needs, and nothing it doesn't.
+          hubbs, channels, and direct messages — everything your team needs, and nothing it doesn't.
         </p>
         <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-center">
           <RouterLink
@@ -111,9 +111,9 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 const features = [
-  { icon: '🏢', name: 'huubs',           desc: 'Create separate spaces for different teams or projects.' },
+  { icon: '🏢', name: 'hubbs',           desc: 'Create separate spaces for different teams or projects.' },
   { icon: '#',  name: 'Channels',        desc: 'Topic-based rooms to keep conversations organized.' },
-  { icon: '💬', name: 'Direct Messages', desc: 'Private one-on-one chats with anyone in your huub.' },
+  { icon: '💬', name: 'Direct Messages', desc: 'Private one-on-one chats with anyone in your hubb.' },
   { icon: '⚡', name: 'Real-time',       desc: 'Messages delivered instantly via WebSockets, no polling.' },
 ]
 

@@ -81,7 +81,7 @@
       </div>
       <div
         class="w-9 h-9 rounded-xl flex items-center justify-center text-lg cursor-pointer transition-all shrink-0 bg-teal-border/50 dark:bg-gray-700 text-teal-primary dark:text-gray-400 hover:bg-teal-border dark:hover:bg-gray-600"
-        title="Create huub"
+        title="Create hubb"
         @click="showCreateWsModal = true"
       >+</div>
     </div>
@@ -131,11 +131,11 @@
     <!-- Invite Member modal -->
     <div v-if="showInviteModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click.self="closeInviteModal">
       <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 w-80 border border-teal-border dark:border-gray-700 flex flex-col gap-4 shadow-lg">
-        <h3 class="font-bold text-gray-900 dark:text-gray-100">Invite to huub</h3>
+        <h3 class="font-bold text-gray-900 dark:text-gray-100">Invite to hubb</h3>
         <input
-          v-model="inviteEmail"
-          placeholder="email@example.com"
-          type="email"
+          v-model="inviteUsername"
+          placeholder="username"
+          type="text"
           class="w-full px-3 py-2 rounded-lg border border-teal-border dark:border-gray-600 bg-teal-lighter dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-primary"
         />
         <p v-if="inviteError" class="text-xs text-red-500">{{ inviteError }}</p>
@@ -149,7 +149,7 @@
     <!-- Create Workspace modal (mobile) -->
     <div v-if="showCreateWsModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click.self="showCreateWsModal = false">
       <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 w-80 border border-teal-border dark:border-gray-700 flex flex-col gap-4 shadow-lg">
-        <h3 class="font-bold text-gray-900 dark:text-gray-100">New huub</h3>
+        <h3 class="font-bold text-gray-900 dark:text-gray-100">New hubb</h3>
         <input
           v-model="newWsName"
           placeholder="My Team"
@@ -243,7 +243,7 @@ async function handleCreateWs() {
     newWsName.value = ''
     router.push(`/workspace/${res.data.workspace.slug}`)
   } catch (e) {
-    createWsError.value = e.response?.data?.error || 'Failed to create huub'
+    createWsError.value = e.response?.data?.error || 'Failed to create hubb'
   } finally {
     createWsLoading.value = false
   }
@@ -265,20 +265,20 @@ async function createNewChannel() {
 }
 
 const showInviteModal = ref(false)
-const inviteEmail = ref('')
+const inviteUsername = ref('')
 const inviteError = ref('')
 
 function closeInviteModal() {
   showInviteModal.value = false
-  inviteEmail.value = ''
+  inviteUsername.value = ''
   inviteError.value = ''
 }
 
 async function sendInvite() {
-  if (!inviteEmail.value.trim()) return
+  if (!inviteUsername.value.trim()) return
   inviteError.value = ''
   try {
-    await inviteMember(props.workspaceId, { email: inviteEmail.value.trim() })
+    await inviteMember(props.workspaceId, { username: inviteUsername.value.trim() })
     closeInviteModal()
   } catch (err) {
     inviteError.value = err.response?.data?.error || 'Something went wrong'
