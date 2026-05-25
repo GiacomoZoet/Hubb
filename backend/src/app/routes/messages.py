@@ -145,7 +145,7 @@ def search_messages():
 
     sql = """
         SELECT * FROM messages
-        WHERE MATCH(content) AGAINST(:query IN BOOLEAN MODE)
+        WHERE to_tsvector('english', content) @@ plainto_tsquery('english', :query)
     """
 
     params = {'query': query}
