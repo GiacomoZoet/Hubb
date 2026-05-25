@@ -6,8 +6,6 @@ A real-time team messaging web app built as a final year university project. Thi
 
 - Create and join workspaces (called "hubbs")
 - Public and private channels within each workspace, with real-time messaging
-- Thread replies on messages
-- Emoji reactions on messages
 - Direct messages between users, also real-time
 - Invite members to workspaces and private channels by username
 - Link previews with Open Graph metadata for URLs in messages
