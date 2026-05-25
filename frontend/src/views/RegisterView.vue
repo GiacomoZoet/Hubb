@@ -19,7 +19,7 @@
             <input
               v-model="form.username"
               type="text"
-              placeholder="giacomo"
+              placeholder="johndoe"
               required
               class="w-full px-4 py-2.5 rounded-lg border border-teal-border dark:border-gray-600 bg-teal-lighter dark:bg-gray-900 text-gray-900 dark:text-gray-100 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-primary"
             />
