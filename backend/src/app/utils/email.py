@@ -7,7 +7,13 @@ from itsdangerous import URLSafeTimedSerializer
 def _base_html(title, heading, body_content, cta_label, cta_url, expiry_note):
     return f"""<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="supported-color-schemes" content="light">
+  <style>:root {{ color-scheme: light; }}</style>
+</head>
 <body style="margin:0;padding:0;background:#f0fafa;font-family:Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0fafa;padding:40px 0;">
     <tr><td align="center">
@@ -15,35 +21,35 @@ def _base_html(title, heading, body_content, cta_label, cta_url, expiry_note):
 
         <!-- Header -->
         <tr>
-          <td style="background:#0b7a71;padding:32px 40px;text-align:center;">
-            <span style="font-size:32px;font-weight:900;color:#ffffff;letter-spacing:-1px;">hubb</span>
+          <td style="background:#0b7a71 !important;padding:32px 40px;text-align:center;">
+            <span style="font-size:32px;font-weight:900;color:#ffffff !important;letter-spacing:-1px;">hubb</span>
           </td>
         </tr>
 
         <!-- Body -->
         <tr>
-          <td style="padding:40px 40px 24px;">
-            <h1 style="margin:0 0 12px;font-size:22px;color:#111827;">{heading}</h1>
-            <p style="margin:0 0 28px;font-size:15px;color:#4b5563;line-height:1.6;">{body_content}</p>
+          <td style="padding:40px 40px 24px;background:#ffffff !important;">
+            <h1 style="margin:0 0 12px;font-size:22px;color:#111827 !important;">{heading}</h1>
+            <p style="margin:0 0 28px;font-size:15px;color:#4b5563 !important;line-height:1.6;">{body_content}</p>
             <table cellpadding="0" cellspacing="0">
               <tr>
-                <td style="border-radius:8px;background:#0b7a71;">
-                  <a href="{cta_url}" style="display:inline-block;padding:14px 32px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;">{cta_label}</a>
+                <td style="border-radius:8px;background:#0b7a71 !important;">
+                  <a href="{cta_url}" style="display:inline-block;padding:14px 32px;font-size:15px;font-weight:700;color:#ffffff !important;text-decoration:none;">{cta_label}</a>
                 </td>
               </tr>
             </table>
-            <p style="margin:24px 0 0;font-size:13px;color:#9ca3af;">{expiry_note}</p>
-            <p style="margin:12px 0 0;font-size:12px;color:#d1d5db;word-break:break-all;">
+            <p style="margin:24px 0 0;font-size:13px;color:#9ca3af !important;">{expiry_note}</p>
+            <p style="margin:12px 0 0;font-size:12px;color:#d1d5db !important;word-break:break-all;">
               If the button doesn't work, copy this link:<br>
-              <a href="{cta_url}" style="color:#0b7a71;">{cta_url}</a>
+              <a href="{cta_url}" style="color:#0b7a71 !important;">{cta_url}</a>
             </p>
           </td>
         </tr>
 
         <!-- Footer -->
         <tr>
-          <td style="background:#f9fafb;padding:20px 40px;border-top:1px solid #e5e7eb;text-align:center;">
-            <p style="margin:0;font-size:12px;color:#9ca3af;">
+          <td style="background:#f9fafb !important;padding:20px 40px;border-top:1px solid #e5e7eb;text-align:center;">
+            <p style="margin:0;font-size:12px;color:#9ca3af !important;">
               You received this email because an account was created or a request was made on hubb.<br>
               If this wasn't you, you can safely ignore this email.
             </p>
