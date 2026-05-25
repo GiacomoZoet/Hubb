@@ -15,7 +15,7 @@ def _base_html(title, heading, body_content, cta_label, cta_url, expiry_note):
 
         <!-- Header -->
         <tr>
-          <td style="background:#0d8e84;padding:32px 40px;text-align:center;">
+          <td style="background:#0b7a71;padding:32px 40px;text-align:center;">
             <span style="font-size:32px;font-weight:900;color:#ffffff;letter-spacing:-1px;">hubb</span>
           </td>
         </tr>
@@ -27,7 +27,7 @@ def _base_html(title, heading, body_content, cta_label, cta_url, expiry_note):
             <p style="margin:0 0 28px;font-size:15px;color:#4b5563;line-height:1.6;">{body_content}</p>
             <table cellpadding="0" cellspacing="0">
               <tr>
-                <td style="border-radius:8px;background:#0d8e84;">
+                <td style="border-radius:8px;background:#0b7a71;">
                   <a href="{cta_url}" style="display:inline-block;padding:14px 32px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;">{cta_label}</a>
                 </td>
               </tr>
@@ -35,7 +35,7 @@ def _base_html(title, heading, body_content, cta_label, cta_url, expiry_note):
             <p style="margin:24px 0 0;font-size:13px;color:#9ca3af;">{expiry_note}</p>
             <p style="margin:12px 0 0;font-size:12px;color:#d1d5db;word-break:break-all;">
               If the button doesn't work, copy this link:<br>
-              <a href="{cta_url}" style="color:#0d8e84;">{cta_url}</a>
+              <a href="{cta_url}" style="color:#0b7a71;">{cta_url}</a>
             </p>
           </td>
         </tr>
