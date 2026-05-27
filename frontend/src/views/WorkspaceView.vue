@@ -116,6 +116,12 @@ watch(() => chatStore.deletedWorkspaceId, (id) => {
   }
 })
 
+watch(() => chatStore.addedChannel, (channel) => {
+  if (channel && channel.workspace_id === activeWorkspace.value?.id) {
+    reloadChannels()
+  }
+})
+
 watch(() => chatStore.messages.length, (newLen, oldLen) => {
   if (newLen > oldLen && activeMobilePanel.value !== 'chat') chatUnread.value = true
 })

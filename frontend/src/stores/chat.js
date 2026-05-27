@@ -10,6 +10,7 @@ export const useChatStore = defineStore('chat', () => {
     const socket = shallowRef(null)
     const deletedWorkspaceId = ref(null)
     const liveInvitations = ref([])
+    const addedChannel = ref(null)
 
     function connectSocket() {
         if (socket.value) return
@@ -45,6 +46,10 @@ export const useChatStore = defineStore('chat', () => {
             liveInvitations.value.push(data)
         })
 
+        socket.value.on('channel_added', (data) => {
+            addedChannel.value = data
+        })
+
         socket.value.on('user_typing', (data) => {
             if (!typingUsers.value.includes(data.username)) {
                 typingUsers.value.push(data.username)
@@ -76,5 +81,5 @@ export const useChatStore = defineStore('chat', () => {
         messages.value = [...res.data.messages].reverse()
     }
 
-    return { messages, typingUsers, socket, deletedWorkspaceId, liveInvitations, connectSocket, joinWorkspace, joinChannel, leaveChannel, sendTyping, loadMessages }
+    return { messages, typingUsers, socket, deletedWorkspaceId, liveInvitations, addedChannel, connectSocket, joinWorkspace, joinChannel, leaveChannel, sendTyping, loadMessages }
 })

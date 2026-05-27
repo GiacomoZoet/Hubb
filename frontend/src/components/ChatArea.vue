@@ -9,9 +9,9 @@
       <span class="font-bold text-gray-900 dark:text-gray-100 text-sm flex-1">{{ channel.name }}</span>
       <button
         v-if="channel.is_private"
-        @click="showAddMemberModal = true"
+        @click="openMembersModal"
         class="text-xs text-teal-primary hover:text-teal-dark transition-colors"
-      >Add member</button>
+      >Members</button>
     </div>
     <MessageList class="flex-1 min-h-0" />
     <div v-if="chatStore.typingUsers.length" class="px-5 py-1 text-xs text-gray-400 dark:text-gray-500 shrink-0">
@@ -19,20 +19,43 @@
     </div>
     <MessageInput :channelId="channel.id" />
 
-    <!-- Add Member modal -->
-    <div v-if="showAddMemberModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click.self="closeAddMemberModal">
+    <!-- Channel Members modal -->
+    <div v-if="showMembersModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" @click.self="closeMembersModal">
       <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 w-80 border border-teal-border dark:border-gray-700 flex flex-col gap-4 shadow-lg">
-        <h3 class="font-bold text-gray-900 dark:text-gray-100">Add to Channel</h3>
-        <input
-          v-model="addUsername"
-          placeholder="username"
-          type="text"
-          class="w-full px-3 py-2 rounded-lg border border-teal-border dark:border-gray-600 bg-teal-lighter dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-primary"
-        />
-        <p v-if="addError" class="text-xs text-red-500">{{ addError }}</p>
-        <div class="flex gap-2 justify-end">
-          <button @click="closeAddMemberModal" class="px-4 py-2 rounded-lg text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Cancel</button>
-          <button @click="submitAddMember" class="px-4 py-2 rounded-lg text-sm bg-teal-primary text-white font-semibold hover:bg-teal-dark transition-colors">Add</button>
+        <h3 class="font-bold text-gray-900 dark:text-gray-100">Channel Members</h3>
+
+        <div class="flex flex-col gap-1 max-h-40 overflow-y-auto">
+          <div
+            v-for="m in channelMembers"
+            :key="m.id"
+            class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm text-gray-700 dark:text-gray-300"
+          >
+            <div :class="['w-7 h-7 rounded-full shrink-0 flex items-center justify-center font-bold text-xs text-white', userColor(m.username)]">
+              {{ m.username.charAt(0).toUpperCase() }}
+            </div>
+            <span class="flex-1 truncate">{{ m.username }}</span>
+            <button
+              v-if="m.id !== channel.created_by"
+              @click="removeMember(m)"
+              class="text-gray-300 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 text-xs transition-colors shrink-0"
+              title="Remove"
+            >✕</button>
+            <span v-else class="text-[10px] text-gray-400 dark:text-gray-500 shrink-0">owner</span>
+          </div>
+        </div>
+
+        <div class="border-t border-teal-border dark:border-gray-700 pt-3 flex flex-col gap-2">
+          <input
+            v-model="addUsername"
+            placeholder="Add by username"
+            type="text"
+            class="w-full px-3 py-2 rounded-lg border border-teal-border dark:border-gray-600 bg-teal-lighter dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-teal-primary"
+          />
+          <p v-if="addError" class="text-xs text-red-500">{{ addError }}</p>
+          <div class="flex gap-2 justify-end">
+            <button @click="closeMembersModal" class="px-4 py-2 rounded-lg text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">Close</button>
+            <button @click="submitAddMember" class="px-4 py-2 rounded-lg text-sm bg-teal-primary text-white font-semibold hover:bg-teal-dark transition-colors">Add</button>
+          </div>
         </div>
       </div>
     </div>
@@ -44,7 +67,8 @@ import { ref, watch, onMounted, onUnmounted } from 'vue'
 import MessageList from './MessageList.vue'
 import MessageInput from './MessageInput.vue'
 import { useChatStore } from '@/stores/chat'
-import { addChannelMember } from '@/api/workspaces'
+import { addChannelMember, getChannelMembers, removeChannelMember } from '@/api/workspaces'
+import { userColor } from '@/utils/userColor'
 
 const props = defineProps(['channel'])
 defineEmits(['back'])
@@ -72,12 +96,21 @@ onUnmounted(() => {
 
 watch(() => props.channel, loadChannel)
 
-const showAddMemberModal = ref(false)
+const showMembersModal = ref(false)
+const channelMembers = ref([])
 const addUsername = ref('')
 const addError = ref('')
 
-function closeAddMemberModal() {
-  showAddMemberModal.value = false
+async function openMembersModal() {
+  addError.value = ''
+  addUsername.value = ''
+  const res = await getChannelMembers(props.channel.id)
+  channelMembers.value = res.data
+  showMembersModal.value = true
+}
+
+function closeMembersModal() {
+  showMembersModal.value = false
   addUsername.value = ''
   addError.value = ''
 }
@@ -87,9 +120,20 @@ async function submitAddMember() {
   addError.value = ''
   try {
     await addChannelMember(props.channel.id, { username: addUsername.value.trim() })
-    closeAddMemberModal()
+    addUsername.value = ''
+    const res = await getChannelMembers(props.channel.id)
+    channelMembers.value = res.data
   } catch (err) {
     addError.value = err.response?.data?.error || 'Something went wrong'
+  }
+}
+
+async function removeMember(user) {
+  try {
+    await removeChannelMember(props.channel.id, user.id)
+    channelMembers.value = channelMembers.value.filter(m => m.id !== user.id)
+  } catch (err) {
+    addError.value = err.response?.data?.error || 'Could not remove member'
   }
 }
 </script>
