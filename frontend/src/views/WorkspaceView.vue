@@ -122,6 +122,14 @@ watch(() => chatStore.addedChannel, (channel) => {
   }
 })
 
+watch(() => chatStore.removedChannelId, (channelId) => {
+  if (!channelId) return
+  channels.value = channels.value.filter(c => c.id !== channelId)
+  if (activeChannel.value?.id === channelId) {
+    activeChannel.value = channels.value[0] ?? null
+  }
+})
+
 watch(() => chatStore.messages.length, (newLen, oldLen) => {
   if (newLen > oldLen && activeMobilePanel.value !== 'chat') chatUnread.value = true
 })

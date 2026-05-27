@@ -14,6 +14,12 @@
           </div>
           <span class="flex-1 truncate">{{ m.username }}</span>
           <span class="text-xs text-gray-400 dark:text-gray-500 capitalize shrink-0">{{ m.role }}</span>
+          <button
+            v-if="myRole === 'owner' && m.role !== 'owner'"
+            @click="handleRemoveMember(m)"
+            class="text-gray-300 dark:text-gray-600 hover:text-red-500 dark:hover:text-red-400 text-xs transition-colors shrink-0"
+            title="Remove"
+          >✕</button>
         </div>
       </div>
 
@@ -60,7 +66,7 @@ import { ref, onMounted, computed } from 'vue'
 import { userColor } from '@/utils/userColor'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { listMembers, leaveWorkspace, deleteWorkspace, listWorkspaces, inviteMember } from '@/api/workspaces'
+import { listMembers, leaveWorkspace, deleteWorkspace, listWorkspaces, inviteMember, removeMember } from '@/api/workspaces'
 
 const props = defineProps(['workspaceId', 'workspaceName'])
 const emit = defineEmits(['close'])
@@ -77,6 +83,15 @@ onMounted(async () => {
 const showInvite = ref(false)
 const inviteUsername = ref('')
 const inviteError = ref('')
+
+async function handleRemoveMember(m) {
+  try {
+    await removeMember(props.workspaceId, m.id)
+    members.value = members.value.filter(x => x.id !== m.id)
+  } catch (err) {
+    alert(err.response?.data?.error || 'Could not remove member')
+  }
+}
 
 async function sendInvite() {
   if (!inviteUsername.value.trim()) return

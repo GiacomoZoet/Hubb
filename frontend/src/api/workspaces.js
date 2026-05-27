@@ -13,5 +13,6 @@ export const removeChannelMember = (channelId, userId)       => api.delete(`/cha
 export const getInvitations    = ()                  => api.get('/workspaces/invitations')
 export const acceptInvitation  = (id)                => api.post(`/workspaces/invitations/${id}/accept`)
 export const declineInvitation = (id)                => api.post(`/workspaces/invitations/${id}/decline`)
-export const leaveWorkspace    = (workspaceId)       => api.delete(`/workspaces/${workspaceId}/leave`)
+export const removeMember      = (workspaceId, userId) => api.delete(`/workspaces/${workspaceId}/members/${userId}`)
+export const leaveWorkspace    = (workspaceId)         => api.delete(`/workspaces/${workspaceId}/leave`)
 export const deleteWorkspace   = (workspaceId)       => api.delete(`/workspaces/${workspaceId}`)

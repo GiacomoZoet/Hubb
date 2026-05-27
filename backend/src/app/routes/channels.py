@@ -132,6 +132,7 @@ def remove_channel_member(channel_id, target_user_id):
 
     db.session.delete(member)
     db.session.commit()
+    socketio.emit('channel_removed', {'channel_id': channel_id}, room=f'user_{target_user_id}')
     return jsonify({'message': 'Member removed'}), 200
 
 
