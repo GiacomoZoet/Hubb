@@ -1,0 +1,15 @@
+{
+  "name": "hubb",
+  "version": "1.0.0",
+  "description": "Real-time messaging platform built with Flask and Vue 3",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && .venv/bin/python src/run.py",
+    "build": "cd frontend && npm run build",
+    "install:frontend": "cd frontend && npm install"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  }
+}
