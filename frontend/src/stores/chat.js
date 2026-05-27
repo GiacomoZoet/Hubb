@@ -78,7 +78,8 @@ export const useChatStore = defineStore('chat', () => {
     }
 
     function sendTyping(channelId) {
-        socket.value?.emit('typing', { channel_id: channelId })
+        const token = localStorage.getItem('access_token')
+        socket.value?.emit('typing', { channel_id: channelId, token })
     }
 
     async function loadMessages(channelId) {
